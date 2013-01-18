@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    <LinearLayout
+	    android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="horizontal">
+		<RelativeLayout 
+		    android:layout_width="0dip"
+	    	android:layout_height="wrap_content"
+	    	android:layout_weight="0.6">
+		    <TextView
+		        android:id="@+id/title_label"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="@string/nextbus_stops" />
+		    <TextView
+		        android:id="@+id/stop_id_label"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_toRightOf="@id/title_label" />
+	
+		    <TextView
+		        android:id="@+id/location_label"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_below="@id/title_label"
+		        android:ellipsize="end"
+		        android:maxLines="3"
+		        android:scrollHorizontally="false" />
+		</RelativeLayout>
+	    <Button
+	        android:id="@+id/btn_mod_fav"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" />
+	</LinearLayout>
+    <ProgressBar
+        android:id="@+id/progress_flat"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="gone" />
+    <TextView
+        android:id="@+id/txt_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:ellipsize="end"
+		android:maxLines="3"
+		android:scrollHorizontally="false" />
+
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+    </ListView>
+
+</LinearLayout>
