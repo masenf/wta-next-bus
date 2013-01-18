@@ -57,7 +57,7 @@ public class NextBusFragment extends ListFragment implements RequestCallback {
 	
 	@Override
 	public void onResume() {
-		
+
         this.setListAdapter(ad);	// set the list adapter before calling super!
 		
 		super.onResume();

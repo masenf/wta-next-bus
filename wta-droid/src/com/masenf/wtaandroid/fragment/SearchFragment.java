@@ -64,6 +64,7 @@ public class SearchFragment extends WtaFragment implements RequestCallback {
     }
     @Override
     public void onResume() {
+		tag = "SearchFragment";
         this.setListAdapter(ad);
     	super.onResume();
     	txt_error.setVisibility(View.GONE);

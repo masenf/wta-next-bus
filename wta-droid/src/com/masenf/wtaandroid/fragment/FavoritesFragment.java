@@ -8,6 +8,8 @@ public class FavoritesFragment extends WtaFragment {
 	
 	@Override
 	public void onResume() {
+		tag = "FavoritesFragment";
+		
         // establish the cursor
 		WtaDatastore d = WtaDatastore.getInstance(getActivity());
 		Cursor c = d.getFavorites();

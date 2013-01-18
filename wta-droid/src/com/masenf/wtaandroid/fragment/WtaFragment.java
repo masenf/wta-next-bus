@@ -7,6 +7,7 @@ import com.masenf.wtaandroid.Wta_main;
 import android.app.ListFragment;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ public class WtaFragment extends ListFragment implements OnItemClickListener {
 
 	private static final String TAG = "WtaFragment";
 	protected static Bundle state;
+	String tag = "WtaFragment";
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -38,12 +40,15 @@ public class WtaFragment extends ListFragment implements OnItemClickListener {
 	public void onResume() {
 		super.onResume();
     	getListView().setOnItemClickListener(this);
-    	if (state.containsKey("list_state"))
-    		getListView().onRestoreInstanceState(state.getParcelable("list_state"));
+    	if (state.containsKey(tag + "_list_state")) {
+    		getListView().onRestoreInstanceState(state.getParcelable(tag + "_list_state"));
+    		Log.v(TAG,"DeSearializing list_state to " + tag + "_list_state");
+    	}
 	}
     @Override
     public void onPause() {
-    	state.putParcelable("list_state", getListView().onSaveInstanceState());
+    	Log.v(TAG,"Searializing list_state to " + tag + "_list_state");
+    	state.putParcelable(tag + "_list_state", getListView().onSaveInstanceState());
     	super.onPause();
     }
 	@Override

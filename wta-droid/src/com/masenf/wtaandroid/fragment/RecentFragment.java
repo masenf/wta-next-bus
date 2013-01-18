@@ -9,6 +9,8 @@ public class RecentFragment extends WtaFragment {
 
 	@Override
 	public void onResume() {
+		tag = "RecentFragment";
+		
         // establish the cursor
 		WtaDatastore d = WtaDatastore.getInstance(getActivity());
 		Cursor c = d.getRecent();
