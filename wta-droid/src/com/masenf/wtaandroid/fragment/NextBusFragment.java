@@ -28,6 +28,7 @@ import android.widget.TextView;
 public class NextBusFragment extends ListFragment implements RequestCallback {
 	
 	private static final String TAG = "NextBusFragment";
+
 	private ProgressBar progress;
 	private TextView stop_id_label;
 	private TextView location_label;
@@ -56,9 +57,10 @@ public class NextBusFragment extends ListFragment implements RequestCallback {
 	
 	@Override
 	public void onResume() {
-		super.onResume();
 		
-        this.setListAdapter(ad);
+        this.setListAdapter(ad);	// set the list adapter before calling super!
+		
+		super.onResume();
         
         txt_error.setVisibility(View.GONE);
 		
@@ -72,26 +74,9 @@ public class NextBusFragment extends ListFragment implements RequestCallback {
 		stop_id_label.setText((CharSequence) String.valueOf(stop_id));
 		location_label.setText((CharSequence) location);
 		
-		if (d.isFavorite(stop_id)) {
-			btn_mod_fav.setText("Remove Favorite");
-			btn_mod_fav.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					d.rmFavorite(stop_id);
-					onResume();
-				}
-			});
-		} else {
-			btn_mod_fav.setText("Add Favorite");
-			btn_mod_fav.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					d.addFavorite(stop_id, location);
-					onResume();
-				}
-			});
-		}
+		updateFavoriteButton(stop_id, location);
 	}
+
     public void startProgress() {
     	if (progress.getVisibility() != View.VISIBLE)
       	{
@@ -137,6 +122,27 @@ public class NextBusFragment extends ListFragment implements RequestCallback {
     public void updateError(String message) {
     	txt_error.setText(message);
     	txt_error.setVisibility(View.VISIBLE);
+    }
+    private void updateFavoriteButton(final int stop_id, final String location) {
+		if (d.isFavorite(stop_id)) {
+			btn_mod_fav.setText("Remove Favorite");
+			btn_mod_fav.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					d.rmFavorite(stop_id);
+					updateFavoriteButton(stop_id, location);
+				}
+			});
+		} else {
+			btn_mod_fav.setText("Add Favorite");
+			btn_mod_fav.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					d.addFavorite(stop_id, location);
+					updateFavoriteButton(stop_id, location);
+				}
+			});
+		}
     }
 
 }

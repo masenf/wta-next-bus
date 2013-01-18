@@ -14,7 +14,6 @@ import com.masenf.wtaandroid.WtaDatastore;
 import com.masenf.wtaandroid.Wta_main;
 import com.masenf.wtaandroid.adapters.ResultsListAdapter;
 
-import android.app.ListFragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,15 +24,13 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class SearchFragment extends ListFragment implements RequestCallback, OnItemClickListener {
+public class SearchFragment extends WtaFragment implements RequestCallback {
 	private static final String TAG = "SearchFragment";
-
-	private int scrollY = 0;
+	
 	private ResultsListAdapter ad = null;
 	private ProgressBar progress = null;
 	private EditText search_box = null;
@@ -63,24 +60,19 @@ public class SearchFragment extends ListFragment implements RequestCallback, OnI
 				return false;
 			}
 		});
-        if (savedInstanceState != null ) {
-        	search_box.setText(savedInstanceState.getString("search_box_value", ""));
-        	scrollY = savedInstanceState.getInt("scrollY",0);
-        }
         return v;
     }
     @Override
     public void onResume() {
-    	super.onResume();
         this.setListAdapter(ad);
-    	getListView().setOnItemClickListener(this);
-    	getListView().setScrollY(scrollY);
+    	super.onResume();
     	txt_error.setVisibility(View.GONE);
+    	search_box.setText((CharSequence) state.getString("search_box_value",""));
     }
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-    	outState.putInt("scrollY", getListView().getScrollY());
-    	outState.putString("search_box_value", search_box.getText().toString());
+    public void onPause() {
+    	state.putString("search_box_value", search_box.getText().toString());
+    	super.onPause();
     }
     public void startProgress() {
    	  if (progress.getVisibility() != View.VISIBLE)
