@@ -14,6 +14,7 @@ tag
   * tag
   * fk
   * type = (stop, tag)
+  * order
 
 Tagging is a way to create a nested folder-like hierarchy in a normalized fashion.
 
