@@ -7,11 +7,10 @@ import android.os.Bundle;
 import android.widget.SimpleCursorAdapter;
 
 public class RecentFragment extends WtaFragment {
-	private static final String TAG = "RecentFragment";
+	protected String TAG = "RecentFragment";
 
 	@Override
 	public void onResume() {
-		tag = "RecentFragment";
 		
         // establish the cursor
 		WtaDatastore d = WtaDatastore.getInstance(getActivity());

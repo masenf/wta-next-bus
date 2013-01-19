@@ -17,6 +17,8 @@ import com.masenf.wtaandroid.WtaDatastore.TagEntryType;
 import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -48,14 +50,28 @@ public abstract class HierarchyListAdapter extends BaseAdapter implements OnItem
 		int width = (int) (ratio * (float) height);
 		folder.setBounds(0,0,width,height);
 	}
+	public Bundle saveAdapterState() {
+		Bundle p = new Bundle();
+		p.putString("current_level", current_level);
+		p.putSerializable("stack", s);
+		return p;
+	}
+	public void restoreAdapterState(Bundle p) {
+		if (p.containsKey("stack"))
+			s = (Stack<String>) p.getSerializable("stack");
+		if (p.containsKey("current_level"))
+			setLevel(p.getString("current_level"));
+	}
 	public boolean up() {
 		if (s.isEmpty() == false) {
+			Log.v(TAG,"up() - going up one level");
 			setLevel(s.pop());
 			return true;
 		}
 		return false;
 	}
 	public void descend(String tag) {
+		Log.v(TAG,"descend() - descending to " + tag);
 		s.push(current_level);
 		setLevel(tag);
 	}
@@ -110,6 +126,7 @@ public abstract class HierarchyListAdapter extends BaseAdapter implements OnItem
 			stop_id.setCompoundDrawables(folder, null, null, null);
 			location.setText(te.name);
 			convertView.setTag(TagEntryType.TAG_NAME);
+			Log.v(TAG, "getView() - Created TagEntry view for " + te.name);
 		} else if (item.getClass() == LocationEntry.class) {
 			final LocationEntry le = (LocationEntry) item;
 			stop_id.setText(String.valueOf(le.stop_id));
@@ -119,11 +136,13 @@ public abstract class HierarchyListAdapter extends BaseAdapter implements OnItem
 			else
 				location.setText(le.alias);
 			convertView.setTag(TagEntryType.STOP);
+			Log.v(TAG, "getView() - Created LocationEntry view for " + le.name);
 		}
 		return convertView;
 	}
 	@Override
 	public void onItemClick(AdapterView<?> adView, View target, int pos, long id) {
+		Log.v(TAG,"onItemClick() - " + target.getTag().toString());
 		if (target.getTag().equals(TagEntryType.TAG_NAME))
 			descend(((TextView) target.findViewById(R.id.item_right)).getText().toString());
 		else {

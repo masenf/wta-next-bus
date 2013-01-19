@@ -1,20 +1,20 @@
 package com.masenf.wtaandroid.fragment;
 
 import com.masenf.wtaandroid.WtaDatastore;
+import com.masenf.wtaandroid.adapters.HierarchyListAdapter;
+
 import android.database.Cursor;
 import android.os.Bundle;
 
-public class FavoritesFragment extends WtaFragment {
+public class FavoritesFragment extends BrowseFragment {
+	private static String TAG = "FavoritesFragment";
 	
 	@Override
 	public void onResume() {
-		tag = "FavoritesFragment";
-		
-        // establish the cursor
-		WtaDatastore d = WtaDatastore.getInstance(getActivity());
-		Cursor c = d.getFavorites();
-		establishListAdapter(c);
-    	
+		if (tag.equals("")) {
+			tag = TAG;
+		}
+		root_tag = WtaDatastore.TAG_FAVORITES;
 		super.onResume();
 	}
 }

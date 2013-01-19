@@ -18,9 +18,9 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class WtaFragment extends ListFragment implements OnItemClickListener {
 
-	private static final String TAG = "WtaFragment";
+	protected String TAG = "WtaFragment";
+	String tag = "";
 	protected static Bundle state;
-	String tag = "WtaFragment";
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
