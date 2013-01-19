@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -21,6 +22,8 @@ public class WtaFragment extends ListFragment implements OnItemClickListener {
 	protected String TAG = "WtaFragment";
 	String tag = "";
 	protected static Bundle state;
+	protected ProgressBar progress;
+	protected TextView txt_error;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -33,7 +36,8 @@ public class WtaFragment extends ListFragment implements OnItemClickListener {
                              Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
     	View v = inflater.inflate(R.layout.list_fragment, container, false);
-    	
+    	progress = (ProgressBar) v.findViewById(R.id.progress_flat);
+    	txt_error = (TextView) v.findViewById(R.id.txt_error);
         return v;
     }
 	@Override
@@ -68,5 +72,21 @@ public class WtaFragment extends ListFragment implements OnItemClickListener {
         	new SimpleCursorAdapter(getActivity(), R.layout.location_item, c, from, to);
         setListAdapter(items);
 	}
+    public void startProgress() {
+     	  if (progress.getVisibility() != View.VISIBLE)
+      	{
+  			progress.setVisibility(View.VISIBLE);
+  			progress.setEnabled(true);
+  			progress.setProgress(0);
+  			progress.setIndeterminate(true);
+      	}
+      }
+      public void stopProgress() {
+      	if (progress.getVisibility() != View.GONE)
+      	{
+      		progress.setEnabled(false);
+      		progress.setVisibility(View.GONE);
+      	}
+    }
 
 }

@@ -4,6 +4,21 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+    <ProgressBar
+        android:id="@+id/progress_flat"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="gone" />
+    <TextView
+        android:id="@+id/txt_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:ellipsize="end"
+		android:maxLines="3"
+		android:scrollHorizontally="false" />
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"

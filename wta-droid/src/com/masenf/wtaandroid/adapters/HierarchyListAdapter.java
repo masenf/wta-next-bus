@@ -78,7 +78,7 @@ public abstract class HierarchyListAdapter extends BaseAdapter implements OnItem
 	public String getCurrentLevel() {
 		return current_level;
 	}
-	private void setLevel(String tag) {
+	public void setLevel(String tag) {
 		this.current_level = tag;
 		WtaDatastore d = WtaDatastore.getInstance(ctx);
 		tags = EntryFactory.fromTagCursor(d.getSubTags(tag));

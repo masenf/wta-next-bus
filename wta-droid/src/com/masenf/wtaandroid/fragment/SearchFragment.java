@@ -32,9 +32,7 @@ public class SearchFragment extends WtaFragment implements RequestCallback {
 	private static final String TAG = "SearchFragment";
 	
 	private ResultsListAdapter ad = null;
-	private ProgressBar progress = null;
 	private EditText search_box = null;
-	private TextView txt_error = null;
 	private WtaDatastore d = null;
 	
     @Override
@@ -75,22 +73,6 @@ public class SearchFragment extends WtaFragment implements RequestCallback {
     public void onPause() {
     	state.putString("search_box_value", search_box.getText().toString());
     	super.onPause();
-    }
-    public void startProgress() {
-   	  if (progress.getVisibility() != View.VISIBLE)
-    	{
-			progress.setVisibility(View.VISIBLE);
-			progress.setEnabled(true);
-			progress.setProgress(0);
-			progress.setIndeterminate(true);
-    	}
-    }
-    public void stopProgress() {
-    	if (progress.getVisibility() != View.GONE)
-    	{
-    		progress.setEnabled(false);
-    		progress.setVisibility(View.GONE);
-    	}
     }
     public void doSearch() {
     	doFetchData(search_box.getText().toString());
