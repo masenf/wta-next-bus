@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import com.masenf.wtaandroid.fragment.FavoritesFragment;
 import com.masenf.wtaandroid.fragment.NextBusFragment;
-import com.masenf.wtaandroid.fragment.RecentFragment;
 import com.masenf.wtaandroid.fragment.SearchFragment;
 import com.masenf.wtaandroid.fragment.BrowseFragment;
 

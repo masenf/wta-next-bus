@@ -1,10 +1,7 @@
 package com.masenf.wtaandroid.fragment;
 
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,11 +12,8 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
-
 import com.masenf.wtaandroid.IonBackButtonPressed;
 import com.masenf.wtaandroid.JSONRequestTask;
-import com.masenf.wtaandroid.R;
 import com.masenf.wtaandroid.RequestCallback;
 import com.masenf.wtaandroid.WtaDatastore;
 import com.masenf.wtaandroid.WtaDatastore.TagEntryType;

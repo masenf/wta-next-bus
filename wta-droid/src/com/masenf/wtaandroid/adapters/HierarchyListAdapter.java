@@ -3,27 +3,18 @@ package com.masenf.wtaandroid.adapters;
 import java.util.ArrayList;
 import java.util.Stack;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
 import com.masenf.wtaandroid.EntryFactory;
-import com.masenf.wtaandroid.IEntry;
 import com.masenf.wtaandroid.LocationEntry;
 import com.masenf.wtaandroid.R;
 import com.masenf.wtaandroid.TagEntry;
 import com.masenf.wtaandroid.WtaDatastore;
-import com.masenf.wtaandroid.WtaDatastore.TagEntryType;
-
 import android.content.Context;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView;

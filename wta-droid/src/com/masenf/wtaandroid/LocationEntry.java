@@ -1,7 +1,5 @@
 package com.masenf.wtaandroid;
 
-import java.util.ArrayList;
-
 import android.database.Cursor;
 import android.util.Log;
 
