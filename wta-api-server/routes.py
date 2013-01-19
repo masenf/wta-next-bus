@@ -9,9 +9,7 @@ PROTOCOL_ROUTES = { 'location' : { 'params' : ('q'),
                     'times' : { 'params' : ('stopid','time','numresults'),
                                 'return' : 'list of list',
                                 'desc'   : 'time is UTC unix timestamp, numresults is limited to 15, return a list of tuples containing ( PST time, route )'}}
-print("Server starting, initializing WTA interface")
-w = wta.Wta_Interface()
-w.get_initial_params()
+w = None
 @route('/')
 def root():
     return { 'name': PROTOCOL_NAME,
@@ -59,4 +57,10 @@ def error(type="GENERAL", message="An error has occurred"):
     return { 'error' : type,
              'message' : message }
 
-run(host='mashed-potatoes', port=8080, debug=True)
+def main():
+    print("Server starting, initializing WTA interface")
+    w = wta.Wta_Interface()
+    w.get_initial_params()
+    run(host='mashed-potatoes', port=8080, debug=True)
+if __name__ == "__main__":
+    main()
