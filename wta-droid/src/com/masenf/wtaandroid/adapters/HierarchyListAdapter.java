@@ -125,7 +125,7 @@ public abstract class HierarchyListAdapter extends BaseAdapter implements OnItem
 			stop_id.setText("");
 			stop_id.setCompoundDrawables(folder, null, null, null);
 			location.setText(te.name);
-			convertView.setTag(TagEntryType.TAG_NAME);
+			convertView.setTag(te);
 			Log.v(TAG, "getView() - Created TagEntry view for " + te.name);
 		} else if (item.getClass() == LocationEntry.class) {
 			final LocationEntry le = (LocationEntry) item;
@@ -135,7 +135,7 @@ public abstract class HierarchyListAdapter extends BaseAdapter implements OnItem
 				location.setText(le.name);
 			else
 				location.setText(le.alias);
-			convertView.setTag(TagEntryType.STOP);
+			convertView.setTag(le);
 			Log.v(TAG, "getView() - Created LocationEntry view for " + le.name);
 		}
 		return convertView;
@@ -143,11 +143,12 @@ public abstract class HierarchyListAdapter extends BaseAdapter implements OnItem
 	@Override
 	public void onItemClick(AdapterView<?> adView, View target, int pos, long id) {
 		Log.v(TAG,"onItemClick() - " + target.getTag().toString());
-		if (target.getTag().equals(TagEntryType.TAG_NAME))
-			descend(((TextView) target.findViewById(R.id.item_right)).getText().toString());
-		else {
-			int stop_id = Integer.parseInt(((TextView) target.findViewById(R.id.item_left)).getText().toString());
-			String name = ((TextView) target.findViewById(R.id.item_right)).getText().toString();
+		Object entry = target.getTag();
+		if (entry.getClass() == TagEntry.class)
+			descend(((TagEntry) entry).name);
+		else if (entry.getClass() == LocationEntry.class) {
+			int stop_id = ((LocationEntry) entry).stop_id;
+			String name = ((LocationEntry) entry).name;
 			onLocationClick(stop_id, name);
 		}
 	}
