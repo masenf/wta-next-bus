@@ -1,4 +1,4 @@
-from bottle import route, run, request
+from bottle import route, run, request, static_file, static_file
 import wta
 
 PROTOCOL_NAME = "wta.py"
@@ -24,7 +24,7 @@ def location():
     except:
         return error("PARAM", "Required parameter q was not specified")
     try:
-        stops = w.LocationLookupAddress(q)
+        stops = w.StopLookupClosest(w.LocationLookupAddress(q))
     except wta.NoResultsFound:
         stops = [] 
     except:
@@ -52,7 +52,9 @@ def times():
         raise
         return error(message="Unhandled exception raised, error processing request")
     return { 'times' : times }
-
+@route('/test')
+def test():
+    return static_file('test_data.json',root='.');
 def error(type="GENERAL", message="An error has occurred"):
     return { 'error' : type,
              'message' : message }

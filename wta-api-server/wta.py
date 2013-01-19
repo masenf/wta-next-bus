@@ -51,14 +51,21 @@ class Wta_Interface(HTTP_Client):
         else:
             form = found[0]
             locations = [(found[0].findChildren(attrs={'name' : "StartGeo"})[0].get('value'))]
-        
+        return locations
+    def StopLookupClosest(self, locations):
         # fetch the relevant data
         stops_clean = set()
         req = 1
+        values = {'.s' : self.s,
+                  '.a' : 'iStopLookupClosest',
+                  'FormState' : '0',
+                  'MaxDistance' : '1000',
+                  'StartGeo' : '',
+                  'Start' : '',
+                  'StartDetail' : '',
+                  'SB' : 'Go' }
         for sgeo in locations:
             req += 1
-            values['SB'] = "Go"
-            values['.a'] = "iStopLookupClosest"
             values['StartGeo'] = sgeo
             
             print("Sending request {}...".format(req))

@@ -1,0 +1,3 @@
+{ "tags" : [ "blue line", "red line" ],
+  "blue line" : [ [ 2083, "This is a stop" ], [9999, "This is my favorite stop"] ],
+  "red line" : [ [ 666, "Avoid this one" ] ] }
