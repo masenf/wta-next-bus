@@ -1,0 +1,14 @@
+#!/usr/bin/env expect -f
+
+spawn /opt/sdk/platform-tools/adb shell
+expect "\$ "
+send "run-as com.masenf.wtaandroid\n"
+expect "\$ "
+send "cat databases/data > /sdcard/data\n"
+expect "\$ "
+send "exit\n"
+expect "\$ "
+send "exit\n"
+expect "\$ "
+spawn /opt/sdk/platform-tools/adb pull /sdcard/data ./data
+expect "\)"
