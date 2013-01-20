@@ -15,10 +15,10 @@ import android.util.Log;
 public class JSONRequestTask extends AsyncTask<URL, Integer, JSONObject> {
 		
 	public static final String TAG = "JSONRequestTask";
-	private RequestCallback cb = null;
+	private RequestCallback<JSONObject> cb = null;
 	private String message = "";
 	
-	public JSONRequestTask(RequestCallback cb) {
+	public JSONRequestTask(RequestCallback<JSONObject> cb) {
 		this.cb = cb;
 	}
 	@Override
@@ -80,12 +80,12 @@ public class JSONRequestTask extends AsyncTask<URL, Integer, JSONObject> {
 	@Override
 	protected void onPostExecute(JSONObject result)
 	{
+		cb.stopProgress();
 		if (message.equals("")) { // no error
 			Log.v(TAG,"Transfer complete, notifying the activity...");
 			cb.updateData(result);
 		} else {
 			cb.updateError(message);
 		}
-		cb.stopProgress();
 	}
 }

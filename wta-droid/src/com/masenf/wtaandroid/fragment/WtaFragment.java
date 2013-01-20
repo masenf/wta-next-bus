@@ -4,6 +4,8 @@ import com.masenf.wtaandroid.R;
 import com.masenf.wtaandroid.WtaDatastore;
 import com.masenf.wtaandroid.Wta_main;
 
+import android.app.Activity;
+import android.app.Fragment;
 import android.app.ListFragment;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -12,15 +14,28 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class WtaFragment extends ListFragment implements OnItemClickListener {
+public abstract class WtaFragment<ListClass> extends Fragment implements OnItemClickListener {
 
-	private static final String TAG = "WtaFragment";
+	protected String TAG = "WtaFragment";
+	String tag = "";
 	protected static Bundle state;
-	String tag = "WtaFragment";
+	protected ProgressBar progress;
+	protected TextView txt_error;
+	protected ListClass lv;
+	
+	public void setListView(ListClass lv) {
+		this.lv = lv;
+	}
+	public ListClass getListView() {
+		return this.lv;
+	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -32,23 +47,25 @@ public class WtaFragment extends ListFragment implements OnItemClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
-    	View v = inflater.inflate(R.layout.list_fragment, container, false);
-    	
+    	View v = inflater.inflate(R.layout.browse_fragment, container, false);
+    	progress = (ProgressBar) v.findViewById(R.id.progress_flat);
+    	txt_error = (TextView) v.findViewById(R.id.txt_error);
+    	lv = (ListClass) v.findViewById(android.R.id.list);
         return v;
     }
 	@Override
 	public void onResume() {
 		super.onResume();
-    	getListView().setOnItemClickListener(this);
+    	((ListView) getListView()).setOnItemClickListener(this);
     	if (state.containsKey(tag + "_list_state")) {
-    		getListView().onRestoreInstanceState(state.getParcelable(tag + "_list_state"));
+    		((ListView) getListView()).onRestoreInstanceState(state.getParcelable(tag + "_list_state"));
     		Log.v(TAG,"DeSearializing list_state to " + tag + "_list_state");
     	}
 	}
     @Override
     public void onPause() {
     	Log.v(TAG,"Searializing list_state to " + tag + "_list_state");
-    	state.putParcelable(tag + "_list_state", getListView().onSaveInstanceState());
+    	state.putParcelable(tag + "_list_state", ((ListView) getListView()).onSaveInstanceState());
     	super.onPause();
     }
 	@Override
@@ -66,7 +83,23 @@ public class WtaFragment extends ListFragment implements OnItemClickListener {
         int[] to = new int[]{R.id.item_stop_id, R.id.item_location};
         SimpleCursorAdapter items =	
         	new SimpleCursorAdapter(getActivity(), R.layout.location_item, c, from, to);
-        setListAdapter(items);
+        ((ListView) lv).setAdapter(items);
 	}
+    public void startProgress() {
+     	  if (progress.getVisibility() != View.VISIBLE)
+      	{
+  			progress.setVisibility(View.VISIBLE);
+  			progress.setEnabled(true);
+  			progress.setProgress(0);
+  			progress.setIndeterminate(true);
+      	}
+      }
+      public void stopProgress() {
+      	if (progress.getVisibility() != View.GONE)
+      	{
+      		progress.setEnabled(false);
+      		progress.setVisibility(View.GONE);
+      	}
+    }
 
 }

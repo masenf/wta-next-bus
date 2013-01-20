@@ -25,16 +25,15 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class SearchFragment extends WtaFragment implements RequestCallback {
+public class SearchFragment extends WtaFragment<ListView> implements RequestCallback<JSONObject> {
 	private static final String TAG = "SearchFragment";
 	
 	private ResultsListAdapter ad = null;
-	private ProgressBar progress = null;
 	private EditText search_box = null;
-	private TextView txt_error = null;
 	private WtaDatastore d = null;
 	
     @Override
@@ -64,8 +63,9 @@ public class SearchFragment extends WtaFragment implements RequestCallback {
     }
     @Override
     public void onResume() {
-		tag = "SearchFragment";
-        this.setListAdapter(ad);
+    	if (tag.equals(""))
+    		tag = TAG;
+        this.getListView().setAdapter(ad);
     	super.onResume();
     	txt_error.setVisibility(View.GONE);
     	search_box.setText((CharSequence) state.getString("search_box_value",""));
@@ -75,22 +75,6 @@ public class SearchFragment extends WtaFragment implements RequestCallback {
     	state.putString("search_box_value", search_box.getText().toString());
     	super.onPause();
     }
-    public void startProgress() {
-   	  if (progress.getVisibility() != View.VISIBLE)
-    	{
-			progress.setVisibility(View.VISIBLE);
-			progress.setEnabled(true);
-			progress.setProgress(0);
-			progress.setIndeterminate(true);
-    	}
-    }
-    public void stopProgress() {
-    	if (progress.getVisibility() != View.GONE)
-    	{
-    		progress.setEnabled(false);
-    		progress.setVisibility(View.GONE);
-    	}
-    }
     public void doSearch() {
     	doFetchData(search_box.getText().toString());
     }
@@ -98,7 +82,7 @@ public class SearchFragment extends WtaFragment implements RequestCallback {
     {
     	String url = new String(Wta_main.wAPI);
 		try {
-			url = new String(url + "location?q=" + URLEncoder.encode(query,"UTF-8"));
+			url = new String(url + "qlocation?q=" + URLEncoder.encode(query,"UTF-8"));
 		} catch (UnsupportedEncodingException e1) {
 			Log.v(TAG,"Unsupported Encoding type when URLEncoding query");
 			return;
@@ -106,7 +90,7 @@ public class SearchFragment extends WtaFragment implements RequestCallback {
 		Log.v(TAG,"Query = " + url);
     	try {
 			URL u = new URL(url);
-			new JSONRequestTask(this).execute(u);
+			new JSONRequestTask(this).executeOnExecutor(JSONRequestTask.THREAD_POOL_EXECUTOR, u);
 		} catch (MalformedURLException e) {
 			Log.v(TAG,"Malformed url: " + url);
 		}
@@ -135,5 +119,8 @@ public class SearchFragment extends WtaFragment implements RequestCallback {
 		String name = txt_name.getText().toString();
 		d.addRecent(stop_id, name);
 		a.lookupTimesForStop(stop_id, name);
+	}
+	@Override
+	public void notifyComplete() {		
 	}
 }

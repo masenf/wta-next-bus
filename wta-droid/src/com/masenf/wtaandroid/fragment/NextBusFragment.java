@@ -25,7 +25,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class NextBusFragment extends ListFragment implements RequestCallback {
+public class NextBusFragment extends ListFragment implements RequestCallback<JSONObject> {
 	
 	private static final String TAG = "NextBusFragment";
 
@@ -57,7 +57,6 @@ public class NextBusFragment extends ListFragment implements RequestCallback {
 	
 	@Override
 	public void onResume() {
-
         this.setListAdapter(ad);	// set the list adapter before calling super!
 		
 		super.onResume();
@@ -106,7 +105,7 @@ public class NextBusFragment extends ListFragment implements RequestCallback {
 		Log.v(TAG,"Query = " + url);
     	try {
 			URL u = new URL(url);
-			new JSONRequestTask(this).execute(u);
+			new JSONRequestTask(this).executeOnExecutor(JSONRequestTask.THREAD_POOL_EXECUTOR, u);
 		} catch (MalformedURLException e) {
 			Log.v(TAG,"Malformed url: " + url);
 		}
@@ -144,5 +143,9 @@ public class NextBusFragment extends ListFragment implements RequestCallback {
 			});
 		}
     }
+
+	@Override
+	public void notifyComplete() {		
+	}
 
 }

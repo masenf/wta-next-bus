@@ -9,7 +9,7 @@
     android:orientation="horizontal" >
 
     <TextView
-        android:id="@+id/item_stop_id"
+        android:id="@+id/item_left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="10dp"
@@ -17,9 +17,10 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/item_location"
+        android:id="@+id/item_right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/LocationTextSize" />
+        android:textSize="@dimen/LocationTextSize"
+        android:layout_gravity="center_vertical" />
 
 </LinearLayout>
