@@ -8,9 +8,14 @@ import com.masenf.wtaandroid.LocationEntry;
 import com.masenf.wtaandroid.R;
 import com.masenf.wtaandroid.TagEntry;
 import com.masenf.wtaandroid.WtaDatastore;
+import com.masenf.wtaandroid.Wta_main;
+
+import android.app.Activity;
+import android.app.ListFragment;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -21,56 +26,24 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-public abstract class HierarchyListAdapter extends BaseAdapter implements OnItemClickListener {
+public class NestedTagListAdapter extends BaseAdapter {
 	private static final String TAG = "HierarchyListAdapter";
-	private Context ctx;
-	private String root;
-	private String current_level;
+	protected Context ctx;
 	private Drawable folder;
 	private ArrayList<TagEntry> tags;
 	private ArrayList<LocationEntry> locations;
-	private Stack<String> s;
-	public HierarchyListAdapter (Context ctx, String root) {
-		s = new Stack<String>();
-		this.root = root;
+	
+	public NestedTagListAdapter (Context ctx) {
 		this.ctx = ctx;
-		setLevel(root);
 		folder = ctx.getResources().getDrawable(R.drawable.tag_white);
 		float ratio = (float) folder.getIntrinsicWidth() / (float) folder.getIntrinsicHeight();
 		int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 45, ctx.getResources().getDisplayMetrics());
 		int width = (int) (ratio * (float) height);
 		folder.setBounds(0,0,width,height);
-	}
-	public Bundle saveAdapterState() {
-		Bundle p = new Bundle();
-		p.putString("current_level", current_level);
-		p.putSerializable("stack", s);
-		return p;
-	}
-	public void restoreAdapterState(Bundle p) {
-		if (p.containsKey("stack"))
-			s = (Stack<String>) p.getSerializable("stack");
-		if (p.containsKey("current_level"))
-			setLevel(p.getString("current_level"));
-	}
-	public boolean up() {
-		if (s.isEmpty() == false) {
-			Log.v(TAG,"up() - going up one level");
-			setLevel(s.pop());
-			return true;
-		}
-		return false;
-	}
-	public void descend(String tag) {
-		Log.v(TAG,"descend() - descending to " + tag);
-		s.push(current_level);
-		setLevel(tag);
-	}
-	public String getCurrentLevel() {
-		return current_level;
+		tags = new ArrayList<TagEntry>();
+		locations = new ArrayList<LocationEntry>();
 	}
 	public void setLevel(String tag) {
-		this.current_level = tag;
 		WtaDatastore d = WtaDatastore.getInstance(ctx);
 		tags = EntryFactory.fromTagCursor(d.getSubTags(tag));
 		locations = EntryFactory.fromLocationCursor(d.getLocations(tag));
@@ -131,18 +104,4 @@ public abstract class HierarchyListAdapter extends BaseAdapter implements OnItem
 		}
 		return convertView;
 	}
-	@Override
-	public void onItemClick(AdapterView<?> adView, View target, int pos, long id) {
-		Log.v(TAG,"onItemClick() - " + target.getTag().toString());
-		Object entry = target.getTag();
-		if (entry.getClass() == TagEntry.class)
-			descend(((TagEntry) entry).name);
-		else if (entry.getClass() == LocationEntry.class) {
-			int stop_id = ((LocationEntry) entry).stop_id;
-			String name = ((LocationEntry) entry).name;
-			onLocationClick(stop_id, name);
-		}
-	}
-	protected abstract void onLocationClick(int stop_id, String name);
-
 }
