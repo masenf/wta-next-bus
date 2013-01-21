@@ -1,22 +1,24 @@
 package com.masenf.wtaandroid;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
 import android.content.Context;
+import android.util.Log;
 
 public class GenericTabListener<T extends Fragment> implements TabListener {
 
-	private Fragment mFragment;
-	private final Context mContext;
+	private static final String TAG = "GenericTabListener";
+	private final Activity mAct;
 	private final String mTag;
-	private final Class<T> mClass;
+	private final Class<T> mClz;
 	
-	public GenericTabListener(Context ctx, String tag, Class<T> frag_clz) {
-		mContext = ctx;
-		mTag = tag;
-		mClass = frag_clz;
+	public GenericTabListener(Activity act, Class<T> fclass) {
+		mAct = act;
+		mTag = fclass.getName();
+		mClz = fclass;
 	}
 	
 	@Override
@@ -26,17 +28,22 @@ public class GenericTabListener<T extends Fragment> implements TabListener {
 
 	@Override
 	public void onTabSelected(Tab t, FragmentTransaction ft) {
-		if (mFragment == null) {
-			mFragment = Fragment.instantiate(mContext, mClass.getName());
-			ft.add(android.R.id.content, mFragment, mTag);
+		Fragment mFrag = mAct.getFragmentManager().findFragmentByTag(mTag);
+		if (mFrag == null) {
+			Log.v(TAG, "onTabSelected() - instantiating " + mTag);
+			mFrag = Fragment.instantiate(mAct, mClz.getName());
+			ft.add(android.R.id.content, mFrag, mTag);
 		} else {
-			ft.attach(mFragment);
+			Log.v(TAG, "onTabSelected() - reattaching " + mTag);
+			ft.attach(mFrag);
 		}
 	}
 
 	@Override
 	public void onTabUnselected(Tab t, FragmentTransaction ft) {
-		ft.detach(mFragment);
+		Log.v(TAG, "onTabUnselected() - detaching " + mTag);
+		Fragment mFrag = mAct.getFragmentManager().findFragmentByTag(mTag);
+		ft.detach(mFrag);
 	}
 
 }

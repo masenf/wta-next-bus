@@ -7,12 +7,12 @@ import java.net.URLEncoder;
 
 import org.json.JSONObject;
 
-import com.masenf.wtaandroid.JSONRequestTask;
 import com.masenf.wtaandroid.R;
-import com.masenf.wtaandroid.RequestCallback;
-import com.masenf.wtaandroid.WtaDatastore;
-import com.masenf.wtaandroid.Wta_main;
+import com.masenf.wtaandroid.WtaActivity;
 import com.masenf.wtaandroid.adapters.ResultsListAdapter;
+import com.masenf.wtaandroid.async.JSONRequestTask;
+import com.masenf.wtaandroid.async.RequestCallback;
+import com.masenf.wtaandroid.data.WtaDatastore;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -29,25 +29,21 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class SearchFragment extends WtaFragment<ListView> implements RequestCallback<JSONObject> {
+public class SearchFragment extends WtaFragment implements RequestCallback<JSONObject> {
 	private static final String TAG = "SearchFragment";
 	
 	private ResultsListAdapter ad = null;
 	private EditText search_box = null;
 	private WtaDatastore d = null;
 	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		this.setLayoutId(R.layout.search_fragment);
+	}
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-    	View v = inflater.inflate(R.layout.search_fragment, container, false);
-        progress = (ProgressBar) v.findViewById(R.id.search_progress);
-    	
-        ad = new ResultsListAdapter(this.getActivity(), "stops");
-        
-        d = WtaDatastore.getInstance(this.getActivity());
-        
-        txt_error = (TextView) v.findViewById(R.id.txt_error);
+    public void onViewCreated(View v, Bundle savedInstanceState) {
+        super.onViewCreated(v, savedInstanceState);
         search_box = (EditText) v.findViewById(R.id.search_box);
         search_box.setOnEditorActionListener(new TextView.OnEditorActionListener() {	
 			@Override
@@ -59,20 +55,25 @@ public class SearchFragment extends WtaFragment<ListView> implements RequestCall
 				return false;
 			}
 		});
-        return v;
+        if (savedInstanceState != null) {
+        	search_box.setText(savedInstanceState.getString("search_box_value",""));
+        }
     }
     @Override
     public void onResume() {
-    	if (tag.equals(""))
-    		tag = TAG;
-        this.getListView().setAdapter(ad);
+		Log.d(TAG,"onResume() - initializing list adapter and restoring values");
+    	if (ad == null) {
+    		Log.d(TAG,"onResume() - ResultsListAdapter ad is null, creating new instance");
+    		ad = new ResultsListAdapter(this.getActivity(), "stops");
+    	}
+        d = WtaDatastore.getInstance(this.getActivity());
+        getListView().setAdapter(ad);
     	super.onResume();
-    	txt_error.setVisibility(View.GONE);
-    	search_box.setText((CharSequence) state.getString("search_box_value",""));
     }
     @Override
     public void onPause() {
-    	state.putString("search_box_value", search_box.getText().toString());
+    	Log.d(TAG,"onPause() - saving search box value");
+    	getInstanceState().putString("search_box_value", search_box.getText().toString());
     	super.onPause();
     }
     public void doSearch() {
@@ -80,39 +81,38 @@ public class SearchFragment extends WtaFragment<ListView> implements RequestCall
     }
     public void doFetchData(String query)
     {
-    	String url = new String(Wta_main.wAPI);
+    	Log.d(TAG,"doFetchData() - fetching 'qlocation' data for " + query);
+    	String url = new String(WtaActivity.wAPI);
 		try {
 			url = new String(url + "qlocation?q=" + URLEncoder.encode(query,"UTF-8"));
 		} catch (UnsupportedEncodingException e1) {
-			Log.v(TAG,"Unsupported Encoding type when URLEncoding query");
+			Log.e(TAG,"Unsupported Encoding type when URLEncoding query");
 			return;
 		}
-		Log.v(TAG,"Query = " + url);
+		Log.d(TAG,"doFetchData() - Created URL = " + url);
     	try {
 			URL u = new URL(url);
 			new JSONRequestTask(this).executeOnExecutor(JSONRequestTask.THREAD_POOL_EXECUTOR, u);
 		} catch (MalformedURLException e) {
-			Log.v(TAG,"Malformed url: " + url);
+			Log.d(TAG,"Malformed url: " + url);
 		}
     }
     public void updateData(JSONObject data)
     {
     	if (data != null) {
+    		Log.v(TAG,"updateData() - Received JSONObject from thread");
 	    	ad.setData(data);
 	    	//hide the keyboard now
 	    	InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(
 	    		      Context.INPUT_METHOD_SERVICE);
 	    	imm.hideSoftInputFromWindow(search_box.getWindowToken(), 0);
+    	} else {
+    		Log.d(TAG,"updateData() - Received null object from thread");
     	}
-    }
-    @Override
-    public void updateError(String message) {
-    	txt_error.setText(message);
-    	txt_error.setVisibility(View.VISIBLE);
     }
 	@Override
 	public void onItemClick(AdapterView<?> adView, View target, int pos, long id) {
-		Wta_main a = (Wta_main) getActivity();
+		WtaActivity a = (WtaActivity) getActivity();
 		TextView txt_stop_id = (TextView) target.findViewById(R.id.item_stop_id);
 		TextView txt_name = (TextView) target.findViewById(R.id.item_location);
 		int stop_id = Integer.parseInt(txt_stop_id.getText().toString());

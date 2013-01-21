@@ -1,4 +1,4 @@
-package com.masenf.wtaandroid;
+package com.masenf.wtaandroid.data;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -91,7 +91,6 @@ public class WtaDatastore {
 		
 		DatabaseHelper(Context ctx) {
 			super(ctx, DATABASE_NAME, null, DATABASE_VERSION);
-			Log.v(TAG,"Instantiating new database helper");
 			Resources res = ctx.getResources();
 		}
 		@Override
@@ -116,7 +115,6 @@ public class WtaDatastore {
 
 	// a Static factory function (this is just for fun)
 	public static WtaDatastore getInstance(Context ctx) throws SQLException {
-		Log.v(TAG,"getInstance called");
 		if (ins == null) {
 			ins = new WtaDatastore();
 			ins.dbHelper = new DatabaseHelper(ctx);
@@ -199,15 +197,12 @@ public class WtaDatastore {
 		return hasTag(fk, tag_id);
 	}
 	private boolean hasTag(long fk, Integer tag_id) {
-		Log.v(TAG,"Is " + fk + " tagged with '" + tag_id + "' ??");
 		Cursor c = db.query(TABLE_TAG_JOIN, new String[] { KEY_ID }, 
 				KEY_TAGID + " = ? AND " + KEY_FK + " = ?" , new String[] {tag_id.toString(), String.valueOf(fk)},
 				null,null,null);
 		if (c.getCount() > 0) {
-			Log.v(TAG,"Yep");
 			return true;
 		}
-		Log.v(TAG,"Nope");
 		return false;
 	}
 	public Cursor getLocations(String tag) {

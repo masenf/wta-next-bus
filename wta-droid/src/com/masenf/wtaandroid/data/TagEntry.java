@@ -1,9 +1,9 @@
-package com.masenf.wtaandroid;
+package com.masenf.wtaandroid.data;
 
 import android.database.Cursor;
 import android.util.Log;
 
-public class TagEntry implements IEntry {
+public class TagEntry extends BaseEntry {
 		private static final String TAG = "TagEntry";
 
 		// a simple data struct

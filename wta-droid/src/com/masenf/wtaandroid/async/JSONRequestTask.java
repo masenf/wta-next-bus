@@ -1,4 +1,4 @@
-package com.masenf.wtaandroid;
+package com.masenf.wtaandroid.async;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -8,6 +8,7 @@ import java.net.URL;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
 
 import android.os.AsyncTask;
 import android.util.Log;

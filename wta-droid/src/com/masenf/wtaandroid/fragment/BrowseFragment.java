@@ -18,63 +18,64 @@ import android.view.View;
 
 import com.masenf.wtaandroid.HierarchyListView;
 import com.masenf.wtaandroid.IonBackButtonPressed;
-import com.masenf.wtaandroid.JSONRequestTask;
-import com.masenf.wtaandroid.LibraryUpdateTask;
-import com.masenf.wtaandroid.ProgressCallback;
-import com.masenf.wtaandroid.RequestCallback;
-import com.masenf.wtaandroid.TaskCallback;
-import com.masenf.wtaandroid.WtaDatastore;
-import com.masenf.wtaandroid.WtaDatastore.TagEntryType;
-import com.masenf.wtaandroid.Wta_main;
+import com.masenf.wtaandroid.TabNavActivity;
+import com.masenf.wtaandroid.WtaActivity;
 import com.masenf.wtaandroid.adapters.NestedTagListAdapter;
+import com.masenf.wtaandroid.async.JSONRequestTask;
+import com.masenf.wtaandroid.async.LibraryUpdateTask;
+import com.masenf.wtaandroid.async.ProgressCallback;
+import com.masenf.wtaandroid.async.RequestCallback;
+import com.masenf.wtaandroid.async.TaskCallback;
+import com.masenf.wtaandroid.data.WtaDatastore;
+import com.masenf.wtaandroid.data.WtaDatastore.TagEntryType;
 
-public class BrowseFragment extends WtaFragment<HierarchyListView> implements IonBackButtonPressed, 
+public class BrowseFragment extends WtaFragment implements IonBackButtonPressed, 
 														   RequestCallback<JSONObject>, 
 														   ProgressCallback {
-
 	private static final String TAG = "BrowseFragment";
 	public static BrowseFragment cb = null;
+	private boolean long_update = false;
 
 	private NestedTagListAdapter ad;
 	protected String root_tag = WtaDatastore.TAG_ROOT;
 	
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		Wta_main a = (Wta_main) getActivity();
-		a.registerBackButtonCallback(this);
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		
+		// Register Back button callback with parent activity
+		TabNavActivity a = (TabNavActivity) getActivity();
+		a.registerBackButtonCallback(this);		// we need the back button for navigation
 	}
 	@Override
 	public void onResume() {
-		if (tag.equals("")) {
-			tag = TAG;
-		}
+		Log.d(TAG,"onResume() - initializing list adapter and restoring values for " + root_tag);
 		if (ad == null) {
+			Log.v(TAG,"onResume() - ad NestedTagListAdapter is null, creating new instance for " + root_tag);
 			ad = new NestedTagListAdapter(this.getActivity());
 		}
 		
-		HierarchyListView lv = getListView();
-		lv.setActivity((Wta_main) getActivity());
+		HierarchyListView lv = (HierarchyListView) getListView();
+		lv.setActivity((WtaActivity) getActivity());
 		lv.setAdapter(ad);
 		lv.setRoot(root_tag);
 		
 		// restore list view state
-		String key = tag + "_stack_state";
-		if (state.containsKey(key)) {
-			lv.restoreStackState(state.getBundle(key));
-			Log.v(TAG,"onResume() - Deserializing stack_state from " + key);
-		}
 		super.onResume();
 		lv.setOnItemClickListener(lv);	// override the default handler
 		
 		cb = this;		// update the callback so that UI updates make it to the visible Fragment
-		
-		if (state.getBoolean("update_in_progress",false)) {
-			this.startProgress(state.getInt("progress_max", 0));
-			progress.setProgress(state.getInt("progress_val", 0));
-			updateError("Continuing to unpack library data, please be patient");
+
+		Bundle inState = getInstanceState();
+		Bundle gState = getGlobalState();
+		// Restore the hierarchy stack state if it exists
+		if (inState.containsKey("stack_state")) {
+			Log.d(TAG,"onResume() - Deserializing stack_state from stack_state for " + root_tag);
+			lv.restoreStackState(inState.getBundle("stack_state"));
 		}
-		
+		if (gState.getBoolean("progress_inprogress", false)) {
+			cb = this;
+		}
 		SharedPreferences spref = getActivity().getSharedPreferences("global", Context.MODE_PRIVATE);
 		if (spref.getBoolean("fetch_library", true)) {
 			doFetchData();
@@ -82,19 +83,18 @@ public class BrowseFragment extends WtaFragment<HierarchyListView> implements Io
 	}
 	@Override
 	public void onPause() {
+		Log.d(TAG,"onPause() - Serializing stack_state for " + root_tag);
 		Bundle stack_state = ((HierarchyListView) getListView()).saveStackState();
-		String key = tag + "_stack_state";
-		state.putBundle(key, stack_state);
-		Log.v(TAG,"onPause() - Serializing stack_state to " + key);
-		if (state.getBoolean("update_in_progress",false)) {
-			state.putInt("progress_max", progress.getMax());
-			state.putInt("progress_val", progress.getProgress());
+		getInstanceState().putBundle("stack_state", stack_state);
+		
+		if (long_update) {
+			updateError("Continuing to unpack library data, please be patient");
 		}
 		super.onPause();
 	}
 	@Override
 	public boolean onBackPressed() {
-		Log.v(TAG,"onBackPressed()");
+		Log.d(TAG,"onBackPressed()");
 		if (this.isVisible()) {
 			if (((HierarchyListView) getListView()).up())
 				return true;
@@ -103,19 +103,20 @@ public class BrowseFragment extends WtaFragment<HierarchyListView> implements Io
 	}
     public void doFetchData()
     {
-    	String url = new String(Wta_main.wAPI);
+		Log.d(TAG,"doFetchData() - fetching library data");
+    	String url = new String(WtaActivity.wAPI);
 		url = new String(url + "library");
-		Log.v(TAG,"Query = " + url);
+		Log.d(TAG,"doFetchData() - Created URL = " + url);
     	try {
 			URL u = new URL(url);
 			new JSONRequestTask(this).executeOnExecutor(JSONRequestTask.THREAD_POOL_EXECUTOR, u);
 		} catch (MalformedURLException e) {
-			Log.v(TAG,"Malformed url: " + url);
+			Log.e(TAG,"Malformed url: " + url);
 		}
     }
 	@Override
 	public void updateData(JSONObject result) {
-		Log.v(TAG,"updateDate() - unpacking JSON data, this may take a while");
+		Log.d(TAG,"updateDate() - unpacking JSON data, this may take a while");
 		SharedPreferences spref = getActivity().getSharedPreferences("global", Context.MODE_PRIVATE);
 		Editor e = spref.edit();
 		e.putBoolean("fetch_library", false);
@@ -123,28 +124,11 @@ public class BrowseFragment extends WtaFragment<HierarchyListView> implements Io
 		WtaDatastore d = WtaDatastore.getInstance(getActivity());
 		LibraryUpdateTask t = new LibraryUpdateTask(d);
 		t.executeOnExecutor(LibraryUpdateTask.THREAD_POOL_EXECUTOR, result);
-		state.putBoolean("update_in_progress", true);
 		updateError("Unpacking library data on first use, please be patient. This will continue in the background");
-	}
-	@Override
-	public void updateError(String msg) {
-    	txt_error.setText(msg);
-    	txt_error.setVisibility(View.VISIBLE);	
+		long_update = true;
 	}
 	@Override
 	public void notifyComplete() {
-		txt_error.setVisibility(View.GONE);
-		state.remove("update_in_progress");
-	}
-    public void startProgress(Integer max) {
-    	startProgress();
-    	if (max > 0) {
-    		progress.setIndeterminate(false);
-    		progress.setMax(max);
-    	}
-    }
-	@Override
-	public void onProgress(Integer sofar) {
-		progress.setProgress(sofar);
+		hideError();
 	}
 }

@@ -1,9 +1,9 @@
-package com.masenf.wtaandroid;
+package com.masenf.wtaandroid.data;
 
 import android.database.Cursor;
 import android.util.Log;
 
-public class LocationEntry implements IEntry {
+public class LocationEntry extends BaseEntry {
 		private static final String TAG = "LocationEntry";
 
 		// a simple data struct

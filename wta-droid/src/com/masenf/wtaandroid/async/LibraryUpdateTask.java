@@ -1,10 +1,11 @@
-package com.masenf.wtaandroid;
+package com.masenf.wtaandroid.async;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.masenf.wtaandroid.WtaDatastore.TagEntryType;
+import com.masenf.wtaandroid.data.WtaDatastore;
+import com.masenf.wtaandroid.data.WtaDatastore.TagEntryType;
 import com.masenf.wtaandroid.fragment.BrowseFragment;
 
 import android.os.AsyncTask;

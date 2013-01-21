@@ -1,105 +1,65 @@
 package com.masenf.wtaandroid.fragment;
 
 import com.masenf.wtaandroid.R;
-import com.masenf.wtaandroid.WtaDatastore;
-import com.masenf.wtaandroid.Wta_main;
+import com.masenf.wtaandroid.WtaActivity;
+import com.masenf.wtaandroid.data.WtaDatastore;
 
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.ListFragment;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public abstract class WtaFragment<ListClass> extends Fragment implements OnItemClickListener {
+public abstract class WtaFragment extends TabFragment implements OnItemClickListener {
 
 	protected String TAG = "WtaFragment";
-	String tag = "";
-	protected static Bundle state;
-	protected ProgressBar progress;
-	protected TextView txt_error;
-	protected ListClass lv;
+	private ListView lv;
 	
-	public void setListView(ListClass lv) {
-		this.lv = lv;
-	}
-	public ListClass getListView() {
-		return this.lv;
-	}
-	
-	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-    	if (state == null)
-    		state = new Bundle();
+		this.setLayoutId(R.layout.browse_fragment);
 	}
 	@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-		// Inflate the layout for this fragment
-    	View v = inflater.inflate(R.layout.browse_fragment, container, false);
-    	progress = (ProgressBar) v.findViewById(R.id.progress_flat);
-    	txt_error = (TextView) v.findViewById(R.id.txt_error);
-    	lv = (ListClass) v.findViewById(android.R.id.list);
-        return v;
-    }
+	public void onViewCreated(View v, Bundle savedInstanceState) {
+		super.onViewCreated(v, savedInstanceState);
+		Log.d(TAG, "onViewCreated() - capturing ListView, lv for " + getClass().getName());
+		lv = (ListView) v.findViewById(android.R.id.list);
+	}
 	@Override
 	public void onResume() {
 		super.onResume();
-    	((ListView) getListView()).setOnItemClickListener(this);
-    	if (state.containsKey(tag + "_list_state")) {
-    		((ListView) getListView()).onRestoreInstanceState(state.getParcelable(tag + "_list_state"));
-    		Log.v(TAG,"DeSearializing list_state to " + tag + "_list_state");
+    	lv.setOnItemClickListener(this);
+    	Bundle inState = getInstanceState();
+    	if (inState.containsKey("list_state")) {
+    		lv.onRestoreInstanceState(inState.getParcelable("list_state"));
+    		Log.d(TAG,"onResume() - DeSerializing list_state for " + getClass().getName());
     	}
 	}
-    @Override
-    public void onPause() {
-    	Log.v(TAG,"Searializing list_state to " + tag + "_list_state");
-    	state.putParcelable(tag + "_list_state", ((ListView) getListView()).onSaveInstanceState());
-    	super.onPause();
-    }
+	@Override
+	public void onPause() {
+		getInstanceState().putParcelable("list_state", lv.onSaveInstanceState());
+		Log.d(TAG,"onSaveInstanceState() - Serializing list_state for " + getClass().getName());
+		super.onPause();
+	}
 	@Override
 	public void onItemClick(AdapterView<?> adView, View target, int pos, long id) {
-		Wta_main a = (Wta_main) getActivity();
+		WtaActivity a = (WtaActivity) getActivity();
 		TextView txt_stop_id = (TextView) target.findViewById(R.id.item_stop_id);
 		TextView txt_name = (TextView) target.findViewById(R.id.item_location);
 		int stop_id = Integer.parseInt(txt_stop_id.getText().toString());
 		String name = txt_name.getText().toString();
 		a.lookupTimesForStop(stop_id, name);
 	}
-	public void establishListAdapter(Cursor c) {
-        String[] from = new String[]{WtaDatastore.KEY_STOPID, 
-        							 WtaDatastore.KEY_NAME};
-        int[] to = new int[]{R.id.item_stop_id, R.id.item_location};
-        SimpleCursorAdapter items =	
-        	new SimpleCursorAdapter(getActivity(), R.layout.location_item, c, from, to);
-        ((ListView) lv).setAdapter(items);
+	
+	public ListView getListView() {
+		if (lv == null) {
+			Log.v(TAG, "Oh no, ListView is null! " + getClass().getName());
+		}
+		return lv;
 	}
-    public void startProgress() {
-     	  if (progress.getVisibility() != View.VISIBLE)
-      	{
-  			progress.setVisibility(View.VISIBLE);
-  			progress.setEnabled(true);
-  			progress.setProgress(0);
-  			progress.setIndeterminate(true);
-      	}
-      }
-      public void stopProgress() {
-      	if (progress.getVisibility() != View.GONE)
-      	{
-      		progress.setEnabled(false);
-      		progress.setVisibility(View.GONE);
-      	}
-    }
-
 }

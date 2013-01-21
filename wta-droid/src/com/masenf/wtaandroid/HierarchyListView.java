@@ -3,6 +3,9 @@ package com.masenf.wtaandroid;
 import java.util.Stack;
 
 import com.masenf.wtaandroid.adapters.NestedTagListAdapter;
+import com.masenf.wtaandroid.data.LocationEntry;
+import com.masenf.wtaandroid.data.TagEntry;
+import com.masenf.wtaandroid.data.WtaDatastore;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -18,7 +21,7 @@ public class HierarchyListView extends ListView implements OnItemClickListener  
 	private static final String TAG = "HierarchyListView";
 	private Stack<StackItem> s;
 	private NestedTagListAdapter ad;
-	private Wta_main a = null;
+	private WtaActivity a = null;
 	private String current_level = "";
 	private String root = "";
 	
@@ -32,6 +35,7 @@ public class HierarchyListView extends ListView implements OnItemClickListener  
 		super(context, attrs, defStyle);
 		root = "";
 		s = new Stack<StackItem>();
+		Log.v(TAG,"Instantiating new HierarchyListView");
 	}
 
 	private class StackItem {
@@ -42,13 +46,14 @@ public class HierarchyListView extends ListView implements OnItemClickListener  
 			this.state = state;
 		}
 	}
-	public void setActivity(Wta_main a) {
+	public void setActivity(WtaActivity a) {
 		this.a = a;
 	}
 	public void setRoot(String root) {
 		this.root = root;
 		setLevel(root);
 		s = new Stack<StackItem>();		// blow the stack away
+		Log.v(TAG,"setRoot() set root to " + root);
 	}
 	public boolean up() {
 		if (s.isEmpty() == false) {
@@ -80,8 +85,11 @@ public class HierarchyListView extends ListView implements OnItemClickListener  
 		ad = (NestedTagListAdapter) this.getAdapter();
 		if (p.containsKey("stack"))
 			this.s = (Stack<StackItem>) p.getSerializable("stack");
-		if (p.containsKey("current_level"))
+		if (p.containsKey("current_level")) {
+			current_level = p.getString("current_level");
 			ad.setLevel(p.getString("current_level"));
+		}
+		Log.v(TAG,"restoreStackState() - restored stack state");
 	}
 	
 	public void setLevel(String tag) {
@@ -89,6 +97,7 @@ public class HierarchyListView extends ListView implements OnItemClickListener  
 		ad = (NestedTagListAdapter) this.getAdapter();
 		ad.setLevel(tag);
 		setSelectionFromTop(0, 0);
+		Log.v(TAG,"setLevel() - set current_level to "+ tag);
 	}
 	@Override
 	public void onItemClick(AdapterView<?> adView, View target, int pos, long id) {

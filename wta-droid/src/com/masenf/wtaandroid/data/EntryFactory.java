@@ -1,6 +1,7 @@
-package com.masenf.wtaandroid;
+package com.masenf.wtaandroid.data;
 
 import java.util.ArrayList;
+
 
 import android.database.Cursor;
 
