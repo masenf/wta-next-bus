@@ -129,9 +129,10 @@ public class NextBusFragment extends WtaFragment implements RequestCallback<JSON
 		Log.d(TAG,"updateStopInfoViews() - stop_id_label = " + stop_id +
 				  ", location_label = " + location + ", fav_label = " + fav_label);
     }
-
 	@Override
-	public void notifyComplete() {		
+	public void notifyComplete() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

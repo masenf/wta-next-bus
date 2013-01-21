@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import android.database.Cursor;
 
-public class EntryFactory {
+public class EntryListFactory {
 
 	public static ArrayList<LocationEntry> fromLocationCursor(Cursor c) {
 		ArrayList<LocationEntry> res = new ArrayList<LocationEntry>();

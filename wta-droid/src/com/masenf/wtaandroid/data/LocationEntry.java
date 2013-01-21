@@ -1,7 +1,11 @@
 package com.masenf.wtaandroid.data;
 
+import com.masenf.wtaandroid.R;
+
 import android.database.Cursor;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 public class LocationEntry extends BaseEntry {
 		private static final String TAG = "LocationEntry";
@@ -28,5 +32,25 @@ public class LocationEntry extends BaseEntry {
 				Log.e(TAG,"Error resolving column indexes...This should never happen");
 			}
 			return le;
+		}
+
+		@Override
+		public int getViewLayout() {
+			return R.layout.hierarchy_item;
+		}
+
+		@Override
+		public View updateView(View convertView) {
+			TextView txt_stop_id = (TextView) convertView.findViewById(R.id.item_left);
+			TextView txt_location = (TextView) convertView.findViewById(R.id.item_right);
+			
+			txt_stop_id.setText(String.valueOf(stop_id));
+			txt_stop_id.setCompoundDrawables(null, null, null, null);
+			if (alias == null)
+				txt_location.setText(name);
+			else
+				txt_location.setText(alias);
+			convertView.setTag(this);
+			return convertView;
 		}
 }

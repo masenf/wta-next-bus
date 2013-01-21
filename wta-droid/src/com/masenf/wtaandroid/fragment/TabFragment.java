@@ -95,6 +95,7 @@ public class TabFragment extends Fragment {
 		}
 		if (gs.getBoolean("error_displayed", false)) {
 			updateError(gs.getString("error_message"));
+			error_displayed = false;
 		}
 	}
 	@Override

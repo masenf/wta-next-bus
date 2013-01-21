@@ -2,6 +2,7 @@ package com.masenf.wtaandroid.data;
 
 import android.database.Cursor;
 import android.util.Log;
+import android.view.View;
 
 public class TimeEntry extends BaseEntry {
 	private static final String TAG = "TimeEntry";
@@ -21,7 +22,7 @@ public class TimeEntry extends BaseEntry {
 		
 	}
 	
-	public TimeEntry fromRow(Cursor row) {
+	public static TimeEntry fromRow(Cursor row) {
 		TimeEntry te = new TimeEntry();
 		try {
 			te.timeid      = row.getInt(   row.getColumnIndexOrThrow(WtaDatastore.KEY_TIMEID));
@@ -36,5 +37,17 @@ public class TimeEntry extends BaseEntry {
 			Log.e(TAG,"Error resolving column indexes...This should never happen");
 		}
 		return te;
+	}
+
+	@Override
+	public int getViewLayout() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public View updateView(View convertView) {
+		// TODO Auto-generated method stub
+		return convertView;
 	}
 }
