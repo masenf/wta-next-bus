@@ -2,11 +2,13 @@ package com.masenf.wtaandroid;
 
 import java.util.ArrayList;
 
+import com.masenf.wtaandroid.async.ProgressCallback;
 import com.masenf.wtaandroid.data.WtaDatastore;
 import com.masenf.wtaandroid.fragment.FavoritesFragment;
 import com.masenf.wtaandroid.fragment.NextBusFragment;
 import com.masenf.wtaandroid.fragment.SearchFragment;
 import com.masenf.wtaandroid.fragment.BrowseFragment;
+import com.masenf.wtaandroid.fragment.TabFragment;
 
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
@@ -18,7 +20,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
-public class WtaActivity extends TabNavActivity {
+public class WtaActivity extends TabNavActivity implements IGlobalProgress {
 
 	private static final String TAG = "WtaActivity";
 	public static final String wAPI = "http://mashed-potatoes.with-linux.com:8080/";
@@ -57,25 +59,25 @@ public class WtaActivity extends TabNavActivity {
         favorites = ab.newTab();
         favorites.setTabListener(new GenericTabListener<FavoritesFragment>(this, FavoritesFragment.class));
         favorites.setText("Favorites");
-        favorites.setTag("Favorites");
+        favorites.setTag(FavoritesFragment.class.getName());
         ab.addTab(favorites);
         
         browse = ab.newTab();
         browse.setTabListener(new GenericTabListener<BrowseFragment>(this, BrowseFragment.class));
         browse.setText("Browse");
-        browse.setTag("Browse");
+        browse.setTag(BrowseFragment.class.getName());
         ab.addTab(browse);
         
         search = ab.newTab();
         search.setTabListener(new GenericTabListener<SearchFragment>(this, SearchFragment.class));
         search.setText("Search");
-        search.setTag("Search");
+        search.setTag(SearchFragment.class.getName());
         ab.addTab(search);
         
         nextbus = ab.newTab();
         nextbus.setTabListener(new GenericTabListener<NextBusFragment>(this, NextBusFragment.class));
         nextbus.setText("Next Bus");
-        nextbus.setTag("NextBus");
+        nextbus.setTag(NextBusFragment.class.getName());
         ab.addTab(nextbus);
         
         ab.setSelectedNavigationItem(sel_tab);
@@ -110,5 +112,11 @@ public class WtaActivity extends TabNavActivity {
     public void lookupTimesForStop(int stop_id)
     {
     	lookupTimesForStop(stop_id, "");
+    }
+    @Override
+    public ProgressCallback getGlobalProgressCallback() {
+    	String sel_tag = getActionBar().getSelectedTab().getTag().toString();
+    	TabFragment sel_frag = (TabFragment) getFragmentManager().findFragmentByTag(sel_tag);
+    	return sel_frag.getProgressCallback();
     }
 }

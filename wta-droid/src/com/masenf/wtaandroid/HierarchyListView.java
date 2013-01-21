@@ -2,7 +2,9 @@ package com.masenf.wtaandroid;
 
 import java.util.Stack;
 
+import com.masenf.wtaandroid.adapters.BaseTaskListAdapter;
 import com.masenf.wtaandroid.adapters.NestedTagListAdapter;
+import com.masenf.wtaandroid.data.EntryList;
 import com.masenf.wtaandroid.data.LocationEntry;
 import com.masenf.wtaandroid.data.TagEntry;
 import com.masenf.wtaandroid.data.WtaDatastore;
@@ -26,10 +28,10 @@ public class HierarchyListView extends ListView implements OnItemClickListener  
 	private String root = "";
 	
 	public HierarchyListView(Context context) {
-		super(context, null, 0);
+		this(context, null, 0);
 	}
 	public HierarchyListView(Context context, AttributeSet attrs) {
-		super(context, attrs, 0);
+		this(context, attrs, 0);
 	}
 	public HierarchyListView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -40,9 +42,11 @@ public class HierarchyListView extends ListView implements OnItemClickListener  
 
 	private class StackItem {
 		String s;
+		Bundle ad_state;
 		Parcelable state;		// the state of the list view on navigation
-		public StackItem (String s, Parcelable state) {
+		public StackItem (String s, Bundle ad_state, Parcelable state) {
 			this.s = s;
+			this.ad_state = ad_state;
 			this.state = state;
 		}
 	}
@@ -51,7 +55,6 @@ public class HierarchyListView extends ListView implements OnItemClickListener  
 	}
 	public void setRoot(String root) {
 		this.root = root;
-		setLevel(root);
 		s = new Stack<StackItem>();		// blow the stack away
 		Log.v(TAG,"setRoot() set root to " + root);
 	}
@@ -59,7 +62,8 @@ public class HierarchyListView extends ListView implements OnItemClickListener  
 		if (s.isEmpty() == false) {
 			Log.v(TAG,"up() - going up one level");
 			StackItem si = s.pop();
-			setLevel(si.s);
+			current_level = si.s;
+			((BaseTaskListAdapter) getAdapter()).restoreAdapterState(si.ad_state);
 			onRestoreInstanceState(si.state);
 			return true;
 		}
@@ -67,7 +71,9 @@ public class HierarchyListView extends ListView implements OnItemClickListener  
 	}
 	public void descend(String tag) {
 		Log.v(TAG,"descend() - descending to " + tag);
-		s.push(new StackItem(current_level, onSaveInstanceState()));
+		s.push(new StackItem(current_level, 
+				((BaseTaskListAdapter) getAdapter()).saveAdapterState(), 
+				onSaveInstanceState()));
 		setLevel(tag);
 	}
 	public String getCurrentLevel() {
@@ -93,10 +99,12 @@ public class HierarchyListView extends ListView implements OnItemClickListener  
 	}
 	
 	public void setLevel(String tag) {
+		if (tag == current_level) 
+			return;
 		current_level = tag;
 		ad = (NestedTagListAdapter) this.getAdapter();
 		ad.setLevel(tag);
-		setSelectionFromTop(0, 0);
+		this.setSelectionAfterHeaderView();
 		Log.v(TAG,"setLevel() - set current_level to "+ tag);
 	}
 	@Override

@@ -1,6 +1,7 @@
 package com.masenf.wtaandroid.fragment;
 
 import com.masenf.wtaandroid.R;
+import com.masenf.wtaandroid.async.ProgressCallback;
 
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
@@ -19,7 +20,9 @@ public class TabFragment extends Fragment {
 	private static final String TAG = "TabFragment";
 	
 	private static Bundle globalState;		// globalState is applicable to all TabFragments
-	protected Bundle instanceState; // instanceState is passed in from onActivityCreated
+	protected Bundle instanceState; 		// instanceState is passed in from onActivityCreated
+	
+	private ProgressCallback mypg = null;		// the callback for THIS instance of the fragment
 	
 	private int times_resumed = 0;
 	
@@ -35,6 +38,9 @@ public class TabFragment extends Fragment {
 	public void setLayoutId(int layout) {
 		layout_id = layout;
 	}
+	public ProgressCallback getProgressCallback() {
+		return mypg;
+	}
 	public Bundle getInstanceState() {
 		if (instanceState == null)
 			instanceState = new Bundle();		// prevent null checking everwhere
@@ -48,6 +54,8 @@ public class TabFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		createProgressCallback();
+		
 		Log.d(TAG, "onCreate() - storing instanceState in class");
 		if (savedInstanceState != null) {
 			if (savedInstanceState.containsKey("globalState")) {
@@ -90,20 +98,21 @@ public class TabFragment extends Fragment {
 		
 		Bundle gs = getGlobalState();
 		if (gs.getBoolean("progress_inprogress", false)) {
-			startProgress(gs.getInt("progress_max", 0));
-			onProgress(gs.getInt("progress_sofar", 0));
+			Log.d(TAG, "onPause() - restoring progress and error values");
+			mypg.startProgress(gs.getInt("progress_max", 0));
+			mypg.onProgress(gs.getInt("progress_sofar", 0));
 		}
 		if (gs.getBoolean("error_displayed", false)) {
-			updateError(gs.getString("error_message"));
+			mypg.updateError(gs.getString("error_message"));
 			error_displayed = false;
 		}
 	}
 	@Override
 	public void onPause() {
-		Log.d(TAG, "onPause() - saving progress and error values");
 		Bundle gs = getGlobalState();
 		
 		if (progress_inprogress) {
+			Log.d(TAG, "onPause() - saving progress and error values");
 			gs.putBoolean("progress_inprogress", progress_inprogress);
 			gs.putInt("progress_max", progress_max);
 			gs.putInt("progress_sofar", progress_sofar);
@@ -123,47 +132,61 @@ public class TabFragment extends Fragment {
 		outState.putBundle("instanceState", is);
 		super.onSaveInstanceState(outState);
 	}
-    public void startProgress() {
-		Log.d(TAG, "startProgress() - initializing progress_flat");
-		progress.setVisibility(View.VISIBLE);
-		progress.setEnabled(true);
-		progress.setProgress(0);
-		progress.setIndeterminate(true);
-		progress_inprogress = true;
-		progress_sofar = 0;
-		progress_max = 0;
-    }
-    public void startProgress(Integer max) {
-    	startProgress();
-		Log.d(TAG, "startProgress(Integer max) - progress.setMax(" + max + ")");
-    	if (max > 0) {
-    		progress.setIndeterminate(false);
-    		progress.setMax(max);
-    		progress_max = max;
-    	}
-    }
-	public void onProgress(Integer sofar) {
-		progress_sofar = sofar;
-		progress.setProgress(sofar);
-	}
-    public void stopProgress() {
-		Log.d(TAG, "stopProgress() - disabling progress_flat");
-    	progress_inprogress = false;
-    	progress.setEnabled(false);
-    	progress.setVisibility(View.GONE);
-    }
-	public void updateError(String msg) {
-		Log.d(TAG, "updateError() - setting error message to '" + msg + "'");
-		error_displayed = true;
-		error_message = msg;
-    	txt_error.setText(msg);
-    	txt_error.setVisibility(View.VISIBLE);	
-	}
 	public void hideError() {
 		Log.d(TAG,"hideError() - hiding error message");
 		error_displayed = false;
 		error_message = "";
 		txt_error.setVisibility(View.GONE);
 	}
-    
+	public void createProgressCallback() {
+		Log.d(TAG, "createProgressCallback() - generating progress callback for " + getClass().getName());
+		mypg = new ProgressCallback() {
+			@Override
+		    public void startProgress() {
+				Log.d(TAG, "startProgress() - initializing progress_flat");
+				progress.setVisibility(View.VISIBLE);
+				progress.setEnabled(true);
+				progress.setProgress(0);
+				progress.setIndeterminate(true);
+				progress_inprogress = true;
+				progress_sofar = 0;
+				progress_max = 0;
+		    }
+			@Override
+		    public void startProgress(Integer max) {
+		    	startProgress();
+				Log.d(TAG, "startProgress(Integer max) - progress.setMax(" + max + ")");
+		    	if (max > 1) {
+		    		progress.setIndeterminate(false);
+		    		progress.setMax(max);
+		    		progress_max = max;
+		    	}
+		    }
+			@Override
+			public void onProgress(Integer sofar) {
+				progress_sofar = sofar;
+				progress.setProgress(sofar);
+			}
+			@Override
+		    public void stopProgress() {
+				Log.d(TAG, "stopProgress() - disabling progress_flat");
+		    	progress_inprogress = false;
+		    	progress.setEnabled(false);
+		    	progress.setVisibility(View.GONE);
+		    }
+			@Override
+			public void updateError(String msg) {
+				Log.d(TAG, "updateError() - setting error message to '" + msg + "'");
+				error_displayed = true;
+				error_message = msg;
+		    	txt_error.setText(msg);
+		    	txt_error.setVisibility(View.VISIBLE);	
+			}
+			@Override
+			public void notifyComplete(boolean success) {
+				if (success)
+					hideError();
+			}
+		};
+	}
 }

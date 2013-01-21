@@ -5,6 +5,11 @@ import android.util.Log;
 import android.view.View;
 
 public class TimeEntry extends BaseEntry {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1556704439712772690L;
+
 	private static final String TAG = "TimeEntry";
 	
 	// a simple data struct

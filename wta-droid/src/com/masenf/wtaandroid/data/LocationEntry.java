@@ -8,6 +8,11 @@ import android.view.View;
 import android.widget.TextView;
 
 public class LocationEntry extends BaseEntry {
+		/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8613795712669924913L;
+
 		private static final String TAG = "LocationEntry";
 
 		// a simple data struct

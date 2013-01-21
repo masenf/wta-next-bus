@@ -11,6 +11,11 @@ import android.view.View;
 import android.widget.TextView;
 
 public class TagEntry extends BaseEntry {
+		/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3777012130328693830L;
+
 		private static final String TAG = "TagEntry";
 
 		// a simple data struct

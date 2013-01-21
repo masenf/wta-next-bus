@@ -1,28 +1,25 @@
 package com.masenf.wtaandroid.data;
 
-import java.util.ArrayList;
-
-
 import android.database.Cursor;
 
 public class EntryListFactory {
 
-	public static ArrayList<LocationEntry> fromLocationCursor(Cursor c) {
-		ArrayList<LocationEntry> res = new ArrayList<LocationEntry>();
+	public EntryList fromLocationCursor(Cursor c) {
+		EntryList res = new EntryList();
 		if (c != null) {
 			c.move(-1);
 			while (c.moveToNext()) {
-				res.add(LocationEntry.fromRow(c));
+				res.add((BaseEntry) LocationEntry.fromRow(c));
 			}
 		}
 		return res;
 	}
-	public static ArrayList<TagEntry> fromTagCursor(Cursor c) {
-		ArrayList<TagEntry> res = new ArrayList<TagEntry>();
+	public EntryList fromTagCursor(Cursor c) {
+		EntryList res = new EntryList();
 		if (c != null) {
 			c.move(-1);
 			while (c.moveToNext()) {
-				res.add(TagEntry.fromRow(c));
+				res.add((BaseEntry) TagEntry.fromRow(c));
 			}
 		}
 		return res;

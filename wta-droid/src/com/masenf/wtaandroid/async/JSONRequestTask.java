@@ -9,24 +9,22 @@ import java.net.URL;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.masenf.wtaandroid.IGlobalProgress;
+
 
 import android.os.AsyncTask;
 import android.util.Log;
 
-public class JSONRequestTask extends AsyncTask<URL, Integer, JSONObject> {
+public class JSONRequestTask extends BaseTask<URL, JSONObject> {
 		
 	public static final String TAG = "JSONRequestTask";
 	private RequestCallback<JSONObject> cb = null;
-	private String message = "";
 	
-	public JSONRequestTask(RequestCallback<JSONObject> cb) {
+	public JSONRequestTask(RequestCallback<JSONObject> cb, IGlobalProgress pg) {
 		this.cb = cb;
+		if (pg != null)
+			setGlobalProgress(pg);
 	}
-	@Override
-	protected void onPreExecute() {
-		cb.startProgress();
-	}
-
 	@Override
 	protected JSONObject doInBackground(URL... params) {
 		int count = params.length;
@@ -38,8 +36,7 @@ public class JSONRequestTask extends AsyncTask<URL, Integer, JSONObject> {
 			try {
 				urlConnection = (HttpURLConnection) params[i].openConnection();
 			} catch (IOException e1) {
-				message = "IOException creating connection: " + e1.getMessage();
-				Log.v(TAG, message);
+				appendError("IOException creating connection: " + e1.getMessage());
 				return new JSONObject();
 			}
 			try {
@@ -58,16 +55,13 @@ public class JSONRequestTask extends AsyncTask<URL, Integer, JSONObject> {
 						break;
 					}
 				} else {
-					message = "Error making API request: " + urlConnection.getResponseMessage();
-					Log.v(TAG, message);
+					appendError("Error making API request: " + urlConnection.getResponseMessage());
 					return new JSONObject();
 				}
 			} catch (IOException e) {
-				message = "IOException reading response: " + e.toString();
-				Log.v(TAG, message);
+				appendError("IOException reading response: " + e.toString());
 			} catch (JSONException e) {
-				message = "JSONException processing request: " + e.toString();
-				Log.v(TAG, message);
+				appendError("JSONException processing request: " + e.toString());
 			} finally {
 				if (res_data == null)
 				{
@@ -81,12 +75,10 @@ public class JSONRequestTask extends AsyncTask<URL, Integer, JSONObject> {
 	@Override
 	protected void onPostExecute(JSONObject result)
 	{
-		cb.stopProgress();
-		if (message.equals("")) { // no error
+		if (hasError() == false) { // no error
 			Log.v(TAG,"Transfer complete, notifying the activity...");
 			cb.updateData(result);
-		} else {
-			cb.updateError(message);
 		}
+		super.onPostExecute(result);
 	}
 }

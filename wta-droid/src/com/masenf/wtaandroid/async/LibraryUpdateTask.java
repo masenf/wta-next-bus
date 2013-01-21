@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.masenf.wtaandroid.IGlobalProgress;
 import com.masenf.wtaandroid.data.WtaDatastore;
 import com.masenf.wtaandroid.data.WtaDatastore.TagEntryType;
 import com.masenf.wtaandroid.fragment.BrowseFragment;
@@ -11,28 +12,19 @@ import com.masenf.wtaandroid.fragment.BrowseFragment;
 import android.os.AsyncTask;
 import android.util.Log;
 
-public class LibraryUpdateTask extends AsyncTask<JSONObject, Integer, Integer> {
+public class LibraryUpdateTask extends BaseTask<JSONObject, Integer> {
 	public static final String TAG = "LibraryUpdateTask";
 	private WtaDatastore d = null;
-	private String message = "";
+
 	private int total_records = 1;
 	private int raw_progress = 0;
 	
-	public LibraryUpdateTask(WtaDatastore d) {
+	public LibraryUpdateTask(WtaDatastore d, IGlobalProgress pg) {
+		if (pg != null)
+			setGlobalProgress(pg);
 		this.d = d;
 	}
-	@Override
-	protected void onPreExecute() {
-		BrowseFragment.cb.startProgress();
-	}
-	@Override 
-	protected void onProgressUpdate(Integer... progress) {
-		int count = progress.length;
-		for (int i = 0; i< count; i++) {
-			BrowseFragment.cb.onProgress(progress[i]);
-		}
-	}
-	
+
 	@Override
 	protected Integer doInBackground(JSONObject... params) {
 		int count = params.length;
@@ -53,7 +45,7 @@ public class LibraryUpdateTask extends AsyncTask<JSONObject, Integer, Integer> {
 						total_records += stops.length();
 					}
 				}
-				BrowseFragment.cb.startProgress(total_records);
+				setProgressMax(total_records);
 				
 				// now process the entries
 				for (int i = 0; i < landmarks.length(); i++) {
@@ -85,21 +77,9 @@ public class LibraryUpdateTask extends AsyncTask<JSONObject, Integer, Integer> {
 					raw_progress += 1;
 				}
 			} catch (JSONException e) {
-				message = "Error unpacking json file, try again under options";
+				appendError("Error unpacking json file, try again under options");
 			}
 		}
 		return Integer.valueOf(0);
 	}
-	@Override
-	protected void onPostExecute(Integer result)
-	{
-		BrowseFragment.cb.stopProgress();
-		if (message.equals("")) { // no error
-			Log.v(TAG,"Update operation complete");
-			BrowseFragment.cb.notifyComplete();
-		} else {
-			BrowseFragment.cb.updateError(message);
-		}
-	}
-
 }

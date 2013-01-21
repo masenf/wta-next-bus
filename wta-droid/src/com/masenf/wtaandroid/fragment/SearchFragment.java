@@ -7,6 +7,7 @@ import java.net.URLEncoder;
 
 import org.json.JSONObject;
 
+import com.masenf.wtaandroid.IGlobalProgress;
 import com.masenf.wtaandroid.R;
 import com.masenf.wtaandroid.WtaActivity;
 import com.masenf.wtaandroid.adapters.ResultsListAdapter;
@@ -29,7 +30,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class SearchFragment extends WtaFragment implements RequestCallback<JSONObject> {
+public class SearchFragment extends WtaFragment {
 	private static final String TAG = "SearchFragment";
 	
 	private ResultsListAdapter ad = null;
@@ -92,23 +93,25 @@ public class SearchFragment extends WtaFragment implements RequestCallback<JSONO
 		Log.d(TAG,"doFetchData() - Created URL = " + url);
     	try {
 			URL u = new URL(url);
-			new JSONRequestTask(this).executeOnExecutor(JSONRequestTask.THREAD_POOL_EXECUTOR, u);
+			new JSONRequestTask(new RequestCallback<JSONObject>() {
+				@Override
+				public void updateData(JSONObject data) {
+			    	if (data != null) {
+			    		Log.v(TAG,"updateData() - Received JSONObject from thread");
+				    	ad.setData(data);
+				    	//hide the keyboard now
+				    	InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(
+				    		      Context.INPUT_METHOD_SERVICE);
+				    	imm.hideSoftInputFromWindow(search_box.getWindowToken(), 0);
+			    	} else {
+			    		Log.d(TAG,"updateData() - Received null object from thread");
+			    	}
+				}
+				
+			},(IGlobalProgress) getActivity()).executeOnExecutor(JSONRequestTask.THREAD_POOL_EXECUTOR, u);
 		} catch (MalformedURLException e) {
 			Log.d(TAG,"Malformed url: " + url);
 		}
-    }
-    public void updateData(JSONObject data)
-    {
-    	if (data != null) {
-    		Log.v(TAG,"updateData() - Received JSONObject from thread");
-	    	ad.setData(data);
-	    	//hide the keyboard now
-	    	InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(
-	    		      Context.INPUT_METHOD_SERVICE);
-	    	imm.hideSoftInputFromWindow(search_box.getWindowToken(), 0);
-    	} else {
-    		Log.d(TAG,"updateData() - Received null object from thread");
-    	}
     }
 	@Override
 	public void onItemClick(AdapterView<?> adView, View target, int pos, long id) {
@@ -119,8 +122,5 @@ public class SearchFragment extends WtaFragment implements RequestCallback<JSONO
 		String name = txt_name.getText().toString();
 		d.addRecent(stop_id, name);
 		a.lookupTimesForStop(stop_id, name);
-	}
-	@Override
-	public void notifyComplete() {		
 	}
 }

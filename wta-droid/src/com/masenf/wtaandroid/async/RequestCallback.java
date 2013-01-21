@@ -1,6 +1,6 @@
 package com.masenf.wtaandroid.async;
 
 
-public interface RequestCallback<T> extends TaskCallback {
-	public void updateData(T result);
+public abstract class RequestCallback<T> {
+	public abstract void updateData(T result);
 }

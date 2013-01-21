@@ -1,9 +1,16 @@
 package com.masenf.wtaandroid.data;
 
+import java.io.Serializable;
+
 import android.database.Cursor;
 import android.view.View;
 
-public abstract class BaseEntry {
+public abstract class BaseEntry implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8315724082631937273L;
 	
 	// create the class from a single cursor row
 	public static BaseEntry fromRow(Cursor c) {

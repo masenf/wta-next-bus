@@ -7,6 +7,7 @@ import java.net.URLEncoder;
 
 import org.json.JSONObject;
 
+import com.masenf.wtaandroid.IGlobalProgress;
 import com.masenf.wtaandroid.R;
 import com.masenf.wtaandroid.WtaActivity;
 import com.masenf.wtaandroid.adapters.TimesListAdapter;
@@ -25,7 +26,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class NextBusFragment extends WtaFragment implements RequestCallback<JSONObject> {
+public class NextBusFragment extends WtaFragment {
 	
 	private static final String TAG = "NextBusFragment";
 
@@ -87,19 +88,21 @@ public class NextBusFragment extends WtaFragment implements RequestCallback<JSON
 		Log.d(TAG,"doFetchData() - Created URL = " + url);
     	try {
 			URL u = new URL(url);
-			new JSONRequestTask(this).executeOnExecutor(JSONRequestTask.THREAD_POOL_EXECUTOR, u);
+			new JSONRequestTask(new RequestCallback<JSONObject>() {
+
+				@Override
+				public void updateData(JSONObject result) {
+					Log.d(TAG,"updateData() - Received JSONObject from thread");
+					ad.setData(result);
+					WtaActivity a = (WtaActivity) getActivity();
+					if (a != null)
+						a.setReload(false);		// don't reload the data next time
+				}
+			}, (IGlobalProgress) getActivity()).executeOnExecutor(JSONRequestTask.THREAD_POOL_EXECUTOR, u);
 		} catch (MalformedURLException e) {
 			Log.e(TAG,"Malformed url: " + url);
 		}
     }
-	@Override
-	public void updateData(JSONObject result) {
-		Log.d(TAG,"updateData() - Received JSONObject from thread");
-		ad.setData(result);
-		WtaActivity a = (WtaActivity) getActivity();
-		if (a != null)
-			a.setReload(false);		// don't reload the data next time
-	}
     private void updateStopInfoViews(final int stop_id, final String location) {
 		String fav_label = "";
 		stop_id_label.setText((CharSequence) String.valueOf(stop_id));
@@ -129,10 +132,4 @@ public class NextBusFragment extends WtaFragment implements RequestCallback<JSON
 		Log.d(TAG,"updateStopInfoViews() - stop_id_label = " + stop_id +
 				  ", location_label = " + location + ", fav_label = " + fav_label);
     }
-	@Override
-	public void notifyComplete() {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

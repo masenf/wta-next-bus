@@ -2,26 +2,38 @@ package com.masenf.wtaandroid.adapters;
 
 import java.util.ArrayList;
 
-import com.masenf.wtaandroid.data.BaseEntry;
-import com.masenf.wtaandroid.data.EntryListFactory;
-import com.masenf.wtaandroid.data.LocationEntry;
-import com.masenf.wtaandroid.data.TagEntry;
-import com.masenf.wtaandroid.data.WtaDatastore;
-
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import com.masenf.wtaandroid.data.BaseEntry;
+import com.masenf.wtaandroid.data.EntryList;
+
 public class BaseTaskListAdapter extends BaseAdapter {
 
 	private static final String TAG = "BaseTaskListAdapter";
 	protected Context ctx;
-	private ArrayList<BaseEntry> items;
+	private EntryList items = new EntryList();
 
-	public void setData(ArrayList<BaseEntry> data) {
+	public void restoreAdapterState(Bundle ad_state) {
+		if (ad_state != null) {
+			if (ad_state.containsKey("items")) {
+				setData((EntryList) ad_state.getSerializable("items"));
+				Log.d(TAG, "restoreAdapterState() - restored items for " + getClass().getName());
+			}
+		}
+	}
+	public Bundle saveAdapterState() {
+		Bundle ad_state = new Bundle();
+		ad_state.putSerializable("items", items);
+		Log.d(TAG, "saveAdapterState() - bundled items for " + getClass().getName());
+		return ad_state;
+	}
+	public void setData(EntryList data) {
 		items = data;
 	}
 	@Override
