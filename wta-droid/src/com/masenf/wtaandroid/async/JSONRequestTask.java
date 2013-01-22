@@ -10,9 +10,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.masenf.wtaandroid.IGlobalProgress;
+import com.masenf.wtaandroid.async.callbacks.RequestCallback;
 
-
-import android.os.AsyncTask;
 import android.util.Log;
 
 public class JSONRequestTask extends BaseTask<URL, JSONObject> {

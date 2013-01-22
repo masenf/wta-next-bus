@@ -1,7 +1,5 @@
 package com.masenf.wtaandroid.adapters;
 
-import java.util.ArrayList;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,15 +7,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-
 import com.masenf.wtaandroid.data.BaseEntry;
 import com.masenf.wtaandroid.data.EntryList;
 
 public class BaseTaskListAdapter extends BaseAdapter {
 
 	private static final String TAG = "BaseTaskListAdapter";
-	protected Context ctx;
 	private EntryList items = new EntryList();
+	protected Context ctx;
+	
+	public BaseTaskListAdapter(Context ctx) {
+		this.ctx = ctx;
+	}
 
 	public void restoreAdapterState(Bundle ad_state) {
 		if (ad_state != null) {
@@ -59,10 +60,9 @@ public class BaseTaskListAdapter extends BaseAdapter {
 		if (convertView==null || 
 			convertView.getTag().getClass().equals(item.getClass()) == false)	// we're not recycling
 		{
-			LayoutInflater inf  = LayoutInflater.from(ctx);
+			LayoutInflater inf  = LayoutInflater.from((Context) ctx);
 			convertView = inf.inflate(item.getViewLayout(), null);
 		}
 		return item.updateView(convertView);
 	}
-
 }

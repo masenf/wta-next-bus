@@ -1,8 +1,6 @@
 package com.masenf.wtaandroid;
 
-import java.util.ArrayList;
-
-import com.masenf.wtaandroid.async.ProgressCallback;
+import com.masenf.wtaandroid.async.callbacks.ProgressCallback;
 import com.masenf.wtaandroid.data.WtaDatastore;
 import com.masenf.wtaandroid.fragment.FavoritesFragment;
 import com.masenf.wtaandroid.fragment.NextBusFragment;
@@ -12,11 +10,6 @@ import com.masenf.wtaandroid.fragment.TabFragment;
 
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 

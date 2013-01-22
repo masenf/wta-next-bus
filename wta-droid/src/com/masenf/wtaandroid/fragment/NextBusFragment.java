@@ -12,18 +12,14 @@ import com.masenf.wtaandroid.R;
 import com.masenf.wtaandroid.WtaActivity;
 import com.masenf.wtaandroid.adapters.TimesListAdapter;
 import com.masenf.wtaandroid.async.JSONRequestTask;
-import com.masenf.wtaandroid.async.RequestCallback;
+import com.masenf.wtaandroid.async.callbacks.RequestCallback;
 import com.masenf.wtaandroid.data.WtaDatastore;
 
-import android.app.ListFragment;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class NextBusFragment extends WtaFragment {

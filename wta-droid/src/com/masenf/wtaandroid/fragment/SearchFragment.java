@@ -12,25 +12,22 @@ import com.masenf.wtaandroid.R;
 import com.masenf.wtaandroid.WtaActivity;
 import com.masenf.wtaandroid.adapters.ResultsListAdapter;
 import com.masenf.wtaandroid.async.JSONRequestTask;
-import com.masenf.wtaandroid.async.RequestCallback;
+import com.masenf.wtaandroid.async.callbacks.RequestCallback;
 import com.masenf.wtaandroid.data.WtaDatastore;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class SearchFragment extends WtaFragment {
+public class SearchFragment extends WtaFragment implements OnItemClickListener {
 	private static final String TAG = "SearchFragment";
 	
 	private ResultsListAdapter ad = null;
@@ -69,6 +66,7 @@ public class SearchFragment extends WtaFragment {
     	}
         d = WtaDatastore.getInstance(this.getActivity());
         getListView().setAdapter(ad);
+        getListView().setOnItemClickListener(this);
     	super.onResume();
     }
     @Override

@@ -1,7 +1,8 @@
 package com.masenf.wtaandroid.data;
 
+import com.masenf.wtaandroid.EntryClickHandler;
+import com.masenf.wtaandroid.NestedTagManager;
 import com.masenf.wtaandroid.R;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
@@ -60,7 +61,10 @@ public class TagEntry extends BaseEntry {
 			
 			return convertView;
 		}
-		
+		@Override
+		public void handleClick(EntryClickHandler ad) {
+			((NestedTagManager) ad).push(name);
+		}
 		public static void createFolder(Context ctx) {
 			folder = ctx.getResources().getDrawable(R.drawable.tag_white);
 			float ratio = (float) folder.getIntrinsicWidth() / (float) folder.getIntrinsicHeight();

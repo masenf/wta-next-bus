@@ -1,14 +1,10 @@
 package com.masenf.wtaandroid.async;
 
-import java.util.ArrayList;
-
 import com.masenf.wtaandroid.IGlobalProgress;
-import com.masenf.wtaandroid.data.BaseEntry;
+import com.masenf.wtaandroid.async.callbacks.DataReadCallback;
 import com.masenf.wtaandroid.data.DataQuery;
 import com.masenf.wtaandroid.data.EntryList;
 import com.masenf.wtaandroid.data.EntryListFactory;
-import com.masenf.wtaandroid.data.LocationEntry;
-import com.masenf.wtaandroid.data.TagEntry;
 import com.masenf.wtaandroid.data.WtaDatastore;
 
 public class DataReadTaskFactory {
@@ -45,7 +41,6 @@ public class DataReadTaskFactory {
 		t.execute(q);
 		return t;
 	}
-	
 	
 	/*
 	public DataReadTask getStop(int stop_id)

@@ -3,16 +3,13 @@ package com.masenf.wtaandroid.async;
 import java.util.ArrayList;
 
 import com.masenf.wtaandroid.IGlobalProgress;
+import com.masenf.wtaandroid.async.callbacks.DataReadCallback;
 import com.masenf.wtaandroid.data.BaseEntry;
 import com.masenf.wtaandroid.data.DataQuery;
 import com.masenf.wtaandroid.data.EntryList;
-import com.masenf.wtaandroid.fragment.BrowseFragment;
-
-import android.os.AsyncTask;
 
 public class DataReadTask extends BaseTask<DataQuery, EntryList> {
 
-	private IGlobalProgress pg;
 	private DataReadCallback cb;
 	public DataReadTask(DataReadCallback cb, IGlobalProgress pg) {
 		this.cb = cb;

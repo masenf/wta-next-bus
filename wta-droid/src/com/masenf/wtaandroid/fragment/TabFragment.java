@@ -1,12 +1,9 @@
 package com.masenf.wtaandroid.fragment;
 
 import com.masenf.wtaandroid.R;
-import com.masenf.wtaandroid.async.ProgressCallback;
+import com.masenf.wtaandroid.async.callbacks.ProgressCallback;
 
-import android.app.ActionBar.Tab;
-import android.app.ActionBar.TabListener;
 import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,12 +25,7 @@ public class TabFragment extends Fragment {
 	
 	private int layout_id;
 	private ProgressBar progress;
-	protected boolean progress_inprogress = false;
-	private Integer progress_max = null;
-	private Integer progress_sofar = null;
 	private TextView txt_error;
-	private boolean error_displayed = false;
-	private String error_message = "";
 	
 	public void setLayoutId(int layout) {
 		layout_id = layout;
@@ -104,25 +96,7 @@ public class TabFragment extends Fragment {
 		}
 		if (gs.getBoolean("error_displayed", false)) {
 			mypg.updateError(gs.getString("error_message"));
-			error_displayed = false;
 		}
-	}
-	@Override
-	public void onPause() {
-		Bundle gs = getGlobalState();
-		
-		if (progress_inprogress) {
-			Log.d(TAG, "onPause() - saving progress and error values");
-			gs.putBoolean("progress_inprogress", progress_inprogress);
-			gs.putInt("progress_max", progress_max);
-			gs.putInt("progress_sofar", progress_sofar);
-		}
-		if (error_displayed) {
-			gs.putBoolean("error_displayed", error_displayed);
-			gs.putString("error_message", error_message);
-		}
-		
-		super.onPause();
 	}
 	public void onSaveInstanceState(Bundle outState) {
 		Log.d(TAG, "onSaveInstanceState() - persist instanceState/globalState");
@@ -134,8 +108,9 @@ public class TabFragment extends Fragment {
 	}
 	public void hideError() {
 		Log.d(TAG,"hideError() - hiding error message");
-		error_displayed = false;
-		error_message = "";
+		Bundle gs = getGlobalState();
+		gs.putBoolean("error_displayed",false);
+		gs.putString("error_message", "");
 		txt_error.setVisibility(View.GONE);
 	}
 	public void createProgressCallback() {
@@ -143,42 +118,46 @@ public class TabFragment extends Fragment {
 		mypg = new ProgressCallback() {
 			@Override
 		    public void startProgress() {
-				Log.d(TAG, "startProgress() - initializing progress_flat");
+				//Log.v(TAG, "startProgress() - initializing progress_flat");
 				progress.setVisibility(View.VISIBLE);
 				progress.setEnabled(true);
 				progress.setProgress(0);
 				progress.setIndeterminate(true);
-				progress_inprogress = true;
-				progress_sofar = 0;
-				progress_max = 0;
+				Bundle gs = getGlobalState();
+				gs.putBoolean("progress_inprogress",true);
+				gs.putInt("progress_sofar", 0);
+				gs.putInt("progress_max",0);
 		    }
 			@Override
 		    public void startProgress(Integer max) {
 		    	startProgress();
-				Log.d(TAG, "startProgress(Integer max) - progress.setMax(" + max + ")");
-		    	if (max > 1) {
+				//Log.v(TAG, "startProgress(Integer max) - progress.setMax(" + max + ")");
+		    	if (max != null && max > 1) {
 		    		progress.setIndeterminate(false);
 		    		progress.setMax(max);
-		    		progress_max = max;
+		    		getGlobalState().putInt("progress_max", max);
 		    	}
 		    }
 			@Override
 			public void onProgress(Integer sofar) {
-				progress_sofar = sofar;
-				progress.setProgress(sofar);
+				if (sofar != null) {
+					getGlobalState().putInt("progress_sofar", sofar);
+					progress.setProgress(sofar);
+				}
 			}
 			@Override
 		    public void stopProgress() {
-				Log.d(TAG, "stopProgress() - disabling progress_flat");
-		    	progress_inprogress = false;
+				//Log.v(TAG, "stopProgress() - disabling progress_flat");
+				getGlobalState().putBoolean("progress_inprogress", false);
 		    	progress.setEnabled(false);
 		    	progress.setVisibility(View.GONE);
 		    }
 			@Override
 			public void updateError(String msg) {
-				Log.d(TAG, "updateError() - setting error message to '" + msg + "'");
-				error_displayed = true;
-				error_message = msg;
+				//Log.v(TAG, "updateError() - setting error message to '" + msg + "'");
+				Bundle gs = getGlobalState();
+				gs.putBoolean("error_displayed",true);
+				gs.putString("error_message", msg);
 		    	txt_error.setText(msg);
 		    	txt_error.setVisibility(View.VISIBLE);	
 			}

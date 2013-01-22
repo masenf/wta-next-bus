@@ -7,10 +7,6 @@ import org.json.JSONObject;
 import com.masenf.wtaandroid.IGlobalProgress;
 import com.masenf.wtaandroid.data.WtaDatastore;
 import com.masenf.wtaandroid.data.WtaDatastore.TagEntryType;
-import com.masenf.wtaandroid.fragment.BrowseFragment;
-
-import android.os.AsyncTask;
-import android.util.Log;
 
 public class LibraryUpdateTask extends BaseTask<JSONObject, Integer> {
 	public static final String TAG = "LibraryUpdateTask";

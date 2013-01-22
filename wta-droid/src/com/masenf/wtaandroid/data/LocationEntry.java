@@ -1,7 +1,8 @@
 package com.masenf.wtaandroid.data;
 
+import com.masenf.wtaandroid.EntryClickHandler;
 import com.masenf.wtaandroid.R;
-
+import com.masenf.wtaandroid.WtaActivity;
 import android.database.Cursor;
 import android.util.Log;
 import android.view.View;
@@ -17,7 +18,6 @@ public class LocationEntry extends BaseEntry {
 
 		// a simple data struct
 		// which can be initialized from a cursor!
-		public long _id = 0;
 		public int stop_id = 0;
 		public String name = "";
 		public String alias = "";
@@ -57,5 +57,13 @@ public class LocationEntry extends BaseEntry {
 				txt_location.setText(alias);
 			convertView.setTag(this);
 			return convertView;
+		}
+		@Override
+		public void handleClick(EntryClickHandler tg) {
+			WtaActivity a = (WtaActivity) tg.getActivity();
+			if (a != null) {
+				WtaDatastore.getInstance(a).addRecent(stop_id, name);
+				a.lookupTimesForStop(stop_id, name);
+			}
 		}
 }

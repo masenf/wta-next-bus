@@ -1,5 +1,6 @@
 package com.masenf.wtaandroid.data;
 
+import com.masenf.wtaandroid.EntryClickHandler;
 import android.database.Cursor;
 import android.util.Log;
 import android.view.View;
@@ -54,5 +55,11 @@ public class TimeEntry extends BaseEntry {
 	public View updateView(View convertView) {
 		// TODO Auto-generated method stub
 		return convertView;
+	}
+
+	@Override
+	public void handleClick(EntryClickHandler entryClickHandler) {
+		// TODO Auto-generated method stub
+		
 	}
 }

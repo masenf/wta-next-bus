@@ -1,6 +1,7 @@
 package com.masenf.wtaandroid.async;
 
 import com.masenf.wtaandroid.IGlobalProgress;
+import com.masenf.wtaandroid.async.callbacks.ProgressCallback;
 
 import android.os.AsyncTask;
 import android.util.Log;

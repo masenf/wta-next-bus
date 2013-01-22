@@ -2,8 +2,8 @@ package com.masenf.wtaandroid;
 
 import java.util.ArrayList;
 
-import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,9 +33,13 @@ public class TabNavActivity extends Activity {
     @Override
     public void onBackPressed() {
     	if (backButtonCallbacks != null) {
+    		FragmentManager fm = getFragmentManager();
 	    	for (IonBackButtonPressed cb : backButtonCallbacks) {
-	    		if (cb.onBackPressed())
-	    			return;
+	    		Fragment thisF = fm.findFragmentByTag(cb.getFragmentTag());
+	    		if (thisF != null && thisF.isVisible()) {
+	    			if (cb.onBackPressed())
+	    				return;
+	    		}
 	    	}
     	}
     	if (prev_tab == -1) {
