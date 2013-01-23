@@ -50,6 +50,7 @@ public class ProgressListAdapter extends ItemDrawingListAdapter<DrawingItemList<
 	}
 	@Override
 	public Bundle saveAdapterState() {
+		// TODO: consider removing save/restore functions
 		Bundle s = new Bundle();
 		if (this.getCount() > 0) {
 			ArrayList<Bundle> itemState = new ArrayList<Bundle>(getCount());

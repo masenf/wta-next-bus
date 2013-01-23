@@ -172,14 +172,17 @@ public class ProgressItem extends ProgressCallback implements DrawingItem {
 		txt_lbl = (TextView) convertView.findViewById(R.id.txt_lbl);
 		
 		// update views
-		if (inprogress) {
-			startProgress();
-			setProgressMax(progress_max);
-			setProgress(progress_sofar);
+		if (tag == null) {
+			// an uninitialized item
+			convertView.setVisibility(View.GONE);
+		} else {
+			if (inprogress) {
+				startProgress();
+				setProgressMax(progress_max);
+				setProgress(progress_sofar);
+			}
 			if (error_displayed)
 				updateError(error_message);
-		} else {
-			convertView.setVisibility(View.GONE);
 		}
 		setLabel(label);
 		convertView.setTag(this);
