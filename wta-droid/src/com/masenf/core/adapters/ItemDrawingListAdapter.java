@@ -1,12 +1,12 @@
-package com.masenf.wtaandroid.adapters;
+package com.masenf.core.adapters;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.masenf.wtaandroid.DrawingItem;
-import com.masenf.wtaandroid.DrawingItemList;
-import com.masenf.wtaandroid.data.BaseEntry;
-import com.masenf.wtaandroid.data.EntryList;
+import com.masenf.core.DrawingItem;
+import com.masenf.core.DrawingItemList;
+import com.masenf.core.data.BaseEntry;
+import com.masenf.core.data.EntryList;
 
 import android.content.Context;
 import android.os.Bundle;

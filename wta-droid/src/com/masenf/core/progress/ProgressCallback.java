@@ -1,6 +1,6 @@
-package com.masenf.wtaandroid.progress;
+package com.masenf.core.progress;
 
-import com.masenf.wtaandroid.async.callbacks.BaseCallback;
+import com.masenf.core.async.callbacks.BaseCallback;
 
 public class ProgressCallback extends BaseCallback {
 	// basic progress reporting

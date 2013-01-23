@@ -9,13 +9,16 @@ import android.util.Log;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
+import com.masenf.core.EntryClickHandler;
+import com.masenf.core.IonBackButtonPressed;
+import com.masenf.core.StackItem;
+import com.masenf.core.async.callbacks.DataReadCallback;
+import com.masenf.core.data.EntryList;
+import com.masenf.core.progress.IProgressManager;
 import com.masenf.wtaandroid.adapters.TagListAdapter;
 import com.masenf.wtaandroid.async.DataReadTaskFactory;
-import com.masenf.wtaandroid.async.callbacks.DataReadCallback;
-import com.masenf.wtaandroid.data.EntryList;
 import com.masenf.wtaandroid.data.TagEntry;
 import com.masenf.wtaandroid.data.WtaDatastore;
-import com.masenf.wtaandroid.progress.IProgressManager;
 
 public class NestedTagManager extends EntryClickHandler implements OnItemClickListener, IonBackButtonPressed {
 
@@ -45,7 +48,7 @@ public class NestedTagManager extends EntryClickHandler implements OnItemClickLi
 							ad.setData(result);
 							ad.notifyDataSetChanged();
 							lv.invalidate();
-							Log.v(TAG,"Reset data to " + current_item.ltag);
+							Log.v(TAG,"Reset data to " + current_item.getLtag());
 						}
 						adjustStack();
 					}
@@ -60,11 +63,11 @@ public class NestedTagManager extends EntryClickHandler implements OnItemClickLi
 		if (lv == null)
 			return;
 		lv.setAdapter(ad);
-		lv.setSelection(current_item.list_pos);
-		Log.v(TAG, "adjustStack() - set list position to " + current_item.list_pos);
+		lv.setSelection(current_item.getListPos());
+		Log.v(TAG, "adjustStack() - set list position to " + current_item.getListPos());
 	}
 	public void setLevel(String tag) {
-		if (tag == current_item.ltag)
+		if (tag == current_item.getLtag())
 			return;
 		current_item = new StackItem(tag, 0);
 		reloadData();
@@ -77,20 +80,20 @@ public class NestedTagManager extends EntryClickHandler implements OnItemClickLi
 	public boolean pop() {
 		if (s.isEmpty() == false) {
 			current_item = s.pop();
-			Log.v(TAG,"pop() - going up one level to " + current_item.ltag);
+			Log.v(TAG,"pop() - going up one level to " + current_item.getLtag());
 			reloadData();
 			return true;
 		}
 		return false;
 	}
 	private void reloadData() {
-		Log.v(TAG,"reloadData() - started reloading data from " + current_item.ltag);
+		Log.v(TAG,"reloadData() - started reloading data from " + current_item.getLtag());
 		lv.setAdapter(null);
-		dtf.getTagsAndLocations(current_item.ltag);	// spawn the fetch task
+		dtf.getTagsAndLocations(current_item.getLtag());	// spawn the fetch task
 	}
 	public void push(String next_ltag) {
-		current_item.list_pos = lv.getFirstVisiblePosition();
-		Log.v(TAG,"push() - saving state for " + current_item.ltag + ", " + current_item.list_pos);
+		current_item.setListPos(lv.getFirstVisiblePosition());
+		Log.v(TAG,"push() - saving state for " + current_item.getLtag() + ", " + current_item.getListPos());
 		s.push(current_item);
 		Log.v(TAG,"push() - state saved, smash the data into " + next_ltag);
 		setLevel(next_ltag);
@@ -101,7 +104,7 @@ public class NestedTagManager extends EntryClickHandler implements OnItemClickLi
 	public Bundle saveStackState() {
 		Bundle p = new Bundle();
 		p.putBundle("ad_state", ad.saveAdapterState());
-		current_item.list_pos = lv.getFirstVisiblePosition();
+		current_item.setListPos(lv.getFirstVisiblePosition());
 		p.putSerializable("current_item", current_item);
 		p.putSerializable("stack", s);
 		Log.v(TAG,"saveStackState() - saved stack state");

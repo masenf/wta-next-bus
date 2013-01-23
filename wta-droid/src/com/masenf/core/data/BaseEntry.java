@@ -1,9 +1,10 @@
-package com.masenf.wtaandroid.data;
+package com.masenf.core.data;
 
 import java.io.Serializable;
 
-import com.masenf.wtaandroid.DrawingItem;
-import com.masenf.wtaandroid.EntryClickHandler;
+import com.masenf.core.DrawingItem;
+import com.masenf.core.EntryClickHandler;
+
 import android.database.Cursor;
 import android.view.View;
 

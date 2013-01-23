@@ -1,4 +1,4 @@
-package com.masenf.wtaandroid;
+package com.masenf.core;
 
 import android.view.View;
 

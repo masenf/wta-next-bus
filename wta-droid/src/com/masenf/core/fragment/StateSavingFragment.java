@@ -1,4 +1,4 @@
-package com.masenf.wtaandroid.fragment;
+package com.masenf.core.fragment;
 
 import android.app.Fragment;
 import android.os.Bundle;

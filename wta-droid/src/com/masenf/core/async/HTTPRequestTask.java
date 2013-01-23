@@ -1,4 +1,4 @@
-package com.masenf.wtaandroid.async;
+package com.masenf.core.async;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -12,11 +12,11 @@ public abstract class HTTPRequestTask<Params, Result> extends BaseTask<Params, R
 
 	private static final String TAG = "HTTPRequestTask";
 	protected static int BufferSz = 1024;		// 1kb buffer
+	protected HttpURLConnection urlConnection;
 
 	protected BufferedInputStream makeRequest(URL url) {
 		Log.v(TAG, "makeRequest() beginning async fetch of " + url.toString());
 		BufferedInputStream bis = null;
-		HttpURLConnection urlConnection;
 		try {
 			urlConnection = (HttpURLConnection) url.openConnection();
 		} catch (IOException e1) {
@@ -36,14 +36,14 @@ public abstract class HTTPRequestTask<Params, Result> extends BaseTask<Params, R
 		} catch (IOException e) {
 			appendError("IOException reading response: " + e.toString());
 			Log.v(TAG, "makeRequest() unsuccessful connection " + e.toString());
-		} finally {
-			urlConnection.disconnect();
 		}
 		return bis;
 	}
 	protected String readToString(BufferedInputStream bis) {
-		if (bis == null)
+		if (bis == null) {
+			Log.w(TAG,"readToString() InputStream is null");
 			return "";
+		}
 		StringBuilder res = new StringBuilder();	// the response
 		byte[] raw = new byte[BufferSz];
 		int total_bytes = 0;
@@ -56,9 +56,12 @@ public abstract class HTTPRequestTask<Params, Result> extends BaseTask<Params, R
 				for (int i=0;i<bytes_read;i++)
 					res.append((char) raw[i]);
 				postProgress(total_bytes);
+				Log.v(TAG, "Just read " + bytes_read + " bytes");
 			}
 		} catch (IOException e) {
 			appendError("IOException reading response: " + e.toString());
+		} finally {
+			urlConnection.disconnect();		// close the connection
 		}
 		return res.toString();
 	}

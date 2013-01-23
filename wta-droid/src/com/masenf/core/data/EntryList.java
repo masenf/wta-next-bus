@@ -1,8 +1,8 @@
-package com.masenf.wtaandroid.data;
+package com.masenf.core.data;
 
 import java.io.Serializable;
 
-import com.masenf.wtaandroid.DrawingItemList;
+import com.masenf.core.DrawingItemList;
 
 public class EntryList extends DrawingItemList<BaseEntry> implements Serializable {
 

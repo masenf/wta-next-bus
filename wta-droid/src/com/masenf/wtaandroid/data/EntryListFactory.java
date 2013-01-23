@@ -1,5 +1,8 @@
 package com.masenf.wtaandroid.data;
 
+import com.masenf.core.data.BaseEntry;
+import com.masenf.core.data.EntryList;
+
 import android.database.Cursor;
 
 public class EntryListFactory {

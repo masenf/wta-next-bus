@@ -11,15 +11,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ListView;
 
+import com.masenf.core.TabNavActivity;
+import com.masenf.core.async.JSONRequestTask;
+import com.masenf.core.async.callbacks.RequestCallback;
+import com.masenf.core.progress.IProgressManager;
 import com.masenf.wtaandroid.NestedTagManager;
-import com.masenf.wtaandroid.TabNavActivity;
 import com.masenf.wtaandroid.WtaActivity;
 import com.masenf.wtaandroid.adapters.TagListAdapter;
-import com.masenf.wtaandroid.async.JSONRequestTask;
 import com.masenf.wtaandroid.async.LibraryUpdateTask;
-import com.masenf.wtaandroid.async.callbacks.RequestCallback;
 import com.masenf.wtaandroid.data.WtaDatastore;
-import com.masenf.wtaandroid.progress.IProgressManager;
 
 public class BrowseFragment extends WtaFragment {
 	/* A browse fragment exposes a NestedTagManager and a list view for navigating 

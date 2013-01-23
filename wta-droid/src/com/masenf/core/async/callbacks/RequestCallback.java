@@ -1,4 +1,4 @@
-package com.masenf.wtaandroid.async.callbacks;
+package com.masenf.core.async.callbacks;
 
 
 public abstract class RequestCallback<T> {

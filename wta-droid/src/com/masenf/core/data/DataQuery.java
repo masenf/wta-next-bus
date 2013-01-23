@@ -1,4 +1,4 @@
-package com.masenf.wtaandroid.data;
+package com.masenf.core.data;
 
 public interface DataQuery {
 	public EntryList execute();

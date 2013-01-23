@@ -1,11 +1,11 @@
-package com.masenf.wtaandroid.progress;
+package com.masenf.core.progress;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.masenf.wtaandroid.DrawingItemList;
-import com.masenf.wtaandroid.adapters.ItemDrawingListAdapter;
-import com.masenf.wtaandroid.async.callbacks.BaseCallback;
+import com.masenf.core.DrawingItemList;
+import com.masenf.core.adapters.ItemDrawingListAdapter;
+import com.masenf.core.async.callbacks.BaseCallback;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -72,7 +72,7 @@ public class ProgressListAdapter extends ItemDrawingListAdapter<DrawingItemList<
 	}
 	private ProgressItem addProgressItem(String tag, Bundle state) {
 		Log.d(TAG,"addProgressItem()");
-		ProgressItem p = freshItem;
+		ProgressItem p = items.get(items.size() - 1);
 		p.setCallback(completeCallback);
 		if (tag != null)
 			p.setTag(tag);
@@ -80,8 +80,7 @@ public class ProgressListAdapter extends ItemDrawingListAdapter<DrawingItemList<
 			tag = p.getTag();
 		ptags.put(tag, p);
 		
-		freshItem = new ProgressItem();
-		items.add(freshItem);
+		items.add(new ProgressItem());
 		notifyDataSetChanged();
 		Log.d(TAG,"addProgressItem() notifiedDataSetChanged");
 		return p;

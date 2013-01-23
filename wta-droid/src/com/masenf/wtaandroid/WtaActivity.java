@@ -1,5 +1,7 @@
 package com.masenf.wtaandroid;
 
+import com.masenf.core.GenericTabListener;
+import com.masenf.core.TabNavActivity;
 import com.masenf.wtaandroid.data.WtaDatastore;
 import com.masenf.wtaandroid.fragment.FavoritesFragment;
 import com.masenf.wtaandroid.fragment.NextBusFragment;

@@ -1,10 +1,10 @@
-package com.masenf.wtaandroid.progress;
+package com.masenf.core.progress;
 
-import com.masenf.wtaandroid.DrawingItem;
+import com.masenf.core.DrawingItem;
+import com.masenf.core.async.callbacks.BaseCallback;
 import com.masenf.wtaandroid.R;
 import com.masenf.wtaandroid.R.id;
 import com.masenf.wtaandroid.R.layout;
-import com.masenf.wtaandroid.async.callbacks.BaseCallback;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +20,7 @@ public class ProgressItem extends ProgressCallback implements DrawingItem {
 	private ProgressBar progress;
 	private TextView txt_error;
 	private TextView txt_lbl;
+	private View thisView;
 	private boolean inprogress = false;
 	private int progress_sofar = 0;
 	private int progress_max = 0;
@@ -97,13 +98,15 @@ public class ProgressItem extends ProgressCallback implements DrawingItem {
 		error_displayed = false;
 		error_message = "";
 		if (txt_error != null)
-			txt_error.setVisibility(View.GONE);
+			txt_error.setText("");
 	}
 	@Override
     public void startProgress() {
 		//Log.v(TAG, "startProgress() - initializing progress_flat");
+		if (thisView != null) {
+			thisView.setVisibility(View.VISIBLE);
+		}
 		if (progress != null) {
-			progress.setVisibility(View.VISIBLE);
 			progress.setEnabled(true);
 			progress.setProgress(0);
 			progress.setIndeterminate(true);
@@ -130,7 +133,6 @@ public class ProgressItem extends ProgressCallback implements DrawingItem {
 		inprogress = false;
 		if (progress != null) {
 	    	progress.setEnabled(false);
-	    	progress.setVisibility(View.GONE);
 		} else {
 			Log.i(TAG,"stopProgress() - view not created yet");
 		}
@@ -143,7 +145,6 @@ public class ProgressItem extends ProgressCallback implements DrawingItem {
 			error_message = msg;
 			if (txt_error != null) {
 				txt_error.setText(msg);
-				txt_error.setVisibility(View.VISIBLE);
 			} else {
 				Log.i(TAG,"updateError() - view not created yet, postponing message");
 			}
@@ -165,6 +166,7 @@ public class ProgressItem extends ProgressCallback implements DrawingItem {
 	@Override
 	public View updateView(View convertView) {
 		// store refs
+		thisView = convertView;
 		progress = (ProgressBar) convertView.findViewById(R.id.progress_flat);
 		txt_error = (TextView) convertView.findViewById(R.id.txt_error);
 		txt_lbl = (TextView) convertView.findViewById(R.id.txt_lbl);
@@ -174,9 +176,11 @@ public class ProgressItem extends ProgressCallback implements DrawingItem {
 			startProgress();
 			setProgressMax(progress_max);
 			setProgress(progress_sofar);
+			if (error_displayed)
+				updateError(error_message);
+		} else {
+			convertView.setVisibility(View.GONE);
 		}
-		if (error_displayed)
-			updateError(error_message);
 		setLabel(label);
 		convertView.setTag(this);
 		return convertView;

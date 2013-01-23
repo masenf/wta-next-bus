@@ -1,4 +1,4 @@
-package com.masenf.wtaandroid.progress;
+package com.masenf.core.progress;
 
 public class ProgressUpdate {
 	// encapsulates the things that you'd want to update

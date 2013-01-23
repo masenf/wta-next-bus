@@ -1,13 +1,13 @@
-package com.masenf.wtaandroid.async;
+package com.masenf.core.async;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
-import com.masenf.wtaandroid.async.callbacks.DataReadCallback;
-import com.masenf.wtaandroid.data.BaseEntry;
-import com.masenf.wtaandroid.data.DataQuery;
-import com.masenf.wtaandroid.data.EntryList;
-import com.masenf.wtaandroid.progress.IProgressManager;
+import com.masenf.core.async.callbacks.DataReadCallback;
+import com.masenf.core.data.BaseEntry;
+import com.masenf.core.data.DataQuery;
+import com.masenf.core.data.EntryList;
+import com.masenf.core.progress.IProgressManager;
 
 public class DataReadTask extends BaseTask<DataQuery, EntryList> {
 
@@ -21,11 +21,11 @@ public class DataReadTask extends BaseTask<DataQuery, EntryList> {
 	protected EntryList doInBackground(DataQuery... params) {
 		EntryList result = new EntryList();
 		// a speedup loop
-		postProgressMax(50000);
-		for (int i=0;i<50000;i++) {
-			UUID.randomUUID();
-			postProgress(i);
-		}
+//		postProgressMax(500);
+//		for (int i=0;i<500;i++) {
+//			UUID.randomUUID();
+//			postProgress(i);
+//		}
 		postProgressMax(params.length);
 		for (int i=0;i<params.length;i++)
 		{

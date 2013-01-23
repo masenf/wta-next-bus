@@ -1,6 +1,8 @@
 package com.masenf.wtaandroid.data;
 
-import com.masenf.wtaandroid.EntryClickHandler;
+import com.masenf.core.EntryClickHandler;
+import com.masenf.core.data.BaseEntry;
+
 import android.database.Cursor;
 import android.util.Log;
 import android.view.View;

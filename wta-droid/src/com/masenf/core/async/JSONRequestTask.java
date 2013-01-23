@@ -1,4 +1,4 @@
-package com.masenf.wtaandroid.async;
+package com.masenf.core.async;
 
 import java.net.URL;
 import java.util.UUID;
@@ -6,8 +6,8 @@ import java.util.UUID;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.masenf.wtaandroid.async.callbacks.RequestCallback;
-import com.masenf.wtaandroid.progress.IProgressManager;
+import com.masenf.core.async.callbacks.RequestCallback;
+import com.masenf.core.progress.IProgressManager;
 
 import android.util.Log;
 
@@ -40,6 +40,8 @@ public class JSONRequestTask extends HTTPRequestTask<URL, JSONObject> {
 		if (hasError() == false) { // no error
 			Log.v(TAG,"Transfer complete, notifying the activity...");
 			cb.updateData(result);
+		} else {
+			Log.v(TAG,"Error in transfer: " + getError());
 		}
 		super.onPostExecute(result);
 	}

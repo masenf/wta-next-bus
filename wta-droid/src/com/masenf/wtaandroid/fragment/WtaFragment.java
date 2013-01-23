@@ -1,5 +1,6 @@
 package com.masenf.wtaandroid.fragment;
 
+import com.masenf.core.fragment.StateSavingFragment;
 import com.masenf.wtaandroid.R;
 import android.os.Bundle;
 import android.util.Log;

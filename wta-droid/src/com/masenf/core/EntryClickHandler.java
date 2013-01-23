@@ -1,6 +1,6 @@
-package com.masenf.wtaandroid;
+package com.masenf.core;
 
-import com.masenf.wtaandroid.data.BaseEntry;
+import com.masenf.core.data.BaseEntry;
 
 import android.app.Activity;
 import android.util.Log;

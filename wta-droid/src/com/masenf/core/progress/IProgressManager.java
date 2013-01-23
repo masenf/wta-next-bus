@@ -1,4 +1,4 @@
-package com.masenf.wtaandroid.progress;
+package com.masenf.core.progress;
 
 
 public interface IProgressManager {

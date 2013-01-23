@@ -1,9 +1,9 @@
-package com.masenf.wtaandroid.async;
+package com.masenf.core.async;
 
-import com.masenf.wtaandroid.progress.IProgressManager;
-import com.masenf.wtaandroid.progress.ProgressCallback;
-import com.masenf.wtaandroid.progress.ProgressItem;
-import com.masenf.wtaandroid.progress.ProgressUpdate;
+import com.masenf.core.progress.IProgressManager;
+import com.masenf.core.progress.ProgressCallback;
+import com.masenf.core.progress.ProgressItem;
+import com.masenf.core.progress.ProgressUpdate;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -37,6 +37,9 @@ public abstract class BaseTask<Params, Result> extends AsyncTask<Params, Progres
 		if (error == "") 
 			return false;
 		return true;
+	}
+	protected String getError() {
+		return error;
 	}
 	protected void postProgressMax(Integer max) {
 		publishProgress(new ProgressUpdate(0,max));

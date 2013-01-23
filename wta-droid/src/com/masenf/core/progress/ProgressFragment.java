@@ -1,8 +1,8 @@
-package com.masenf.wtaandroid.progress;
+package com.masenf.core.progress;
 
+import com.masenf.core.fragment.StateSavingFragment;
 import com.masenf.wtaandroid.R;
 import com.masenf.wtaandroid.adapters.TagListAdapter;
-import com.masenf.wtaandroid.fragment.StateSavingFragment;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -17,6 +19,10 @@ import android.widget.TextView;
 public class ProgressFragment extends StateSavingFragment {
 	private static final String TAG = "ProgressFragment";
 	private ProgressListAdapter ad;
+	public void setAdapter(ProgressListAdapter ad) {
+		this.ad = ad;
+	}
+
 	private ListView lv;
 	
 	public ProgressFragment() {
@@ -46,5 +52,13 @@ public class ProgressFragment extends StateSavingFragment {
 		}
 		super.onResume();
 		lv.setAdapter(ad);
+		lv.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				Log.v(TAG,"Clicked a progress bar");
+				
+			}
+		});
 	}
 }

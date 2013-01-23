@@ -2,13 +2,14 @@ package com.masenf.wtaandroid.async;
 
 import android.util.Log;
 
-import com.masenf.wtaandroid.async.callbacks.DataReadCallback;
-import com.masenf.wtaandroid.data.BaseEntry;
-import com.masenf.wtaandroid.data.DataQuery;
-import com.masenf.wtaandroid.data.EntryList;
+import com.masenf.core.async.DataReadTask;
+import com.masenf.core.async.callbacks.DataReadCallback;
+import com.masenf.core.data.BaseEntry;
+import com.masenf.core.data.DataQuery;
+import com.masenf.core.data.EntryList;
+import com.masenf.core.progress.IProgressManager;
 import com.masenf.wtaandroid.data.EntryListFactory;
 import com.masenf.wtaandroid.data.WtaDatastore;
-import com.masenf.wtaandroid.progress.IProgressManager;
 
 public class DataReadTaskFactory {
 	

@@ -6,10 +6,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.masenf.core.async.BaseTask;
+import com.masenf.core.progress.IProgressManager;
+import com.masenf.core.progress.ProgressUpdate;
 import com.masenf.wtaandroid.data.WtaDatastore;
 import com.masenf.wtaandroid.data.WtaDatastore.TagEntryType;
-import com.masenf.wtaandroid.progress.IProgressManager;
-import com.masenf.wtaandroid.progress.ProgressUpdate;
 
 public class LibraryUpdateTask extends BaseTask<JSONObject, Integer> {
 	public static final String TAG = "LibraryUpdateTask";
