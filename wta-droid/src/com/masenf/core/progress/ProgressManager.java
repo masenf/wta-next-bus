@@ -10,7 +10,7 @@ public class ProgressManager {
 	}
 	public static ProgressManager initManager(Context ctx) {
 		// to be called from the activity 
-		if (ins != null)
+		if (ins == null)
 			ins = new ProgressManager(ctx);
 		return ins;
 	}

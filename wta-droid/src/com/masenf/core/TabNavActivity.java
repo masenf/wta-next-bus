@@ -16,6 +16,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 public class TabNavActivity extends Activity {
 
@@ -34,8 +35,9 @@ public class TabNavActivity extends Activity {
 			sel_tab = savedInstanceState.getInt("active_tab_idx", 0);
 			prev_tab = savedInstanceState.getInt("prev_tab", -1);
 		}
-
-		pm = ProgressManager.initManager(this);		
+		
+		Log.v(TAG,"onCreate() - attempting to initialize ProgressManager");
+		pm = ProgressManager.initManager(this);
 	}
 	@Override
 	public void onStart() {
