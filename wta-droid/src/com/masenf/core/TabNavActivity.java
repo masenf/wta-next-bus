@@ -2,10 +2,10 @@ package com.masenf.core;
 
 import java.util.ArrayList;
 
-import com.masenf.core.progress.IProgressManager;
 import com.masenf.core.progress.ProgressCallback;
 import com.masenf.core.progress.ProgressFragment;
 import com.masenf.core.progress.ProgressListAdapter;
+import com.masenf.core.progress.ProgressManager;
 import com.masenf.wtaandroid.R;
 import com.masenf.wtaandroid.R.id;
 import com.masenf.wtaandroid.R.layout;
@@ -17,12 +17,12 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.util.Log;
 
-public class TabNavActivity extends Activity implements IProgressManager {
+public class TabNavActivity extends Activity {
 
 	private static final String TAG = "TabNavActivity";
 	protected int sel_tab = 0;
 	protected int prev_tab = -1;
-	private ProgressListAdapter progressAdapter;
+	private ProgressManager pm;
 	private ArrayList<IonBackButtonPressed> backButtonCallbacks;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -35,11 +35,7 @@ public class TabNavActivity extends Activity implements IProgressManager {
 			prev_tab = savedInstanceState.getInt("prev_tab", -1);
 		}
 
-		progressAdapter = new ProgressListAdapter(this);
-		if (savedInstanceState != null && savedInstanceState.containsKey("ad_state")) {
-			progressAdapter.restoreAdapterState(savedInstanceState.getBundle("ad_state"));
-		}
-		
+		pm = ProgressManager.initManager(this);		
 	}
 	@Override
 	public void onStart() {
@@ -49,10 +45,10 @@ public class TabNavActivity extends Activity implements IProgressManager {
 		Fragment GlobalProgress = fm.findFragmentByTag("GlobalProgress");
 		if (GlobalProgress == null) {
 			Log.v(TAG,"onStart() - creating Fragment tagged GlobalProgress");
-			ft.add(R.id.progress_fragment_placeholder, new ProgressFragment(progressAdapter), "GlobalProgress");
+			ft.add(R.id.progress_fragment_placeholder, new ProgressFragment(pm.getAdapter()), "GlobalProgress");
 		} else {
 			Log.v(TAG,"onStart() - attaching Fragment tagged GlobalProgress");
-			((ProgressFragment) GlobalProgress).setAdapter(progressAdapter);
+			((ProgressFragment) GlobalProgress).setAdapter(pm.getAdapter());
 			ft.attach(fm.findFragmentByTag("GlobalProgress"));
 		}
 		ft.commit();
@@ -101,14 +97,5 @@ public class TabNavActivity extends Activity implements IProgressManager {
 		Log.d(TAG, "onSaveInstanceState() - writing active tab state");
     	outState.putInt("active_tab_idx", getActionBar().getSelectedNavigationIndex());
     	outState.putInt("prev_tab", prev_tab);
-    	outState.putBundle("ad_state", progressAdapter.saveAdapterState());
     }
-	@Override
-	public ProgressCallback getProgressCallback(String tag) {
-		return progressAdapter.getCallbackByTag(tag);
-	}
-	@Override
-	public ProgressCallback createProgressCallback(String tag) {
-		return progressAdapter.newProgress(tag);
-	}
 }

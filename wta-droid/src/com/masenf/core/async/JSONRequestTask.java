@@ -7,7 +7,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.masenf.core.async.callbacks.RequestCallback;
-import com.masenf.core.progress.IProgressManager;
 
 import android.util.Log;
 
@@ -16,10 +15,9 @@ public class JSONRequestTask extends HTTPRequestTask<URL, JSONObject> {
 	private static final String TAG = "JSONRequestTask";
 	private RequestCallback<JSONObject> cb = null;
 	
-	public JSONRequestTask(RequestCallback<JSONObject> cb, IProgressManager pg) {
+	public JSONRequestTask(RequestCallback<JSONObject> cb) {
 		this.cb = cb;
-		if (pg != null)
-			setProgressManager(pg, UUID.randomUUID().toString());
+		setTag(UUID.randomUUID().toString());
 	}
 	@Override
 	protected JSONObject doInBackground(URL... params) {

@@ -7,24 +7,21 @@ import com.masenf.core.async.callbacks.DataReadCallback;
 import com.masenf.core.data.BaseEntry;
 import com.masenf.core.data.DataQuery;
 import com.masenf.core.data.EntryList;
-import com.masenf.core.progress.IProgressManager;
 import com.masenf.wtaandroid.data.EntryListFactory;
 import com.masenf.wtaandroid.data.WtaDatastore;
 
 public class DataReadTaskFactory {
 	
 	private DataReadCallback cb;
-	private IProgressManager pg;
 	private WtaDatastore d;
 	private EntryListFactory ef;
-	public DataReadTaskFactory(WtaDatastore d, DataReadCallback cb, IProgressManager pg) {
+	public DataReadTaskFactory(WtaDatastore d, DataReadCallback cb) {
 		this.cb = cb;
-		this.pg = pg;
 		this.d = d;
 		this.ef = new EntryListFactory();
 	}
 	public DataReadTask getTagsAndLocations(final String tag) {
-		DataReadTask t = new DataReadTask(cb, pg);
+		DataReadTask t = new DataReadTask(cb);
 		DataQuery q = new DataQuery() {
 			@Override
 			public EntryList execute() {
@@ -49,7 +46,7 @@ public class DataReadTaskFactory {
 		return getTagsAndLocations(WtaDatastore.TAG_FAVORITES);
 	}
 	public DataReadTask isFavorite(final int stop_id) {
-		DataReadTask t = new DataReadTask(cb, pg);
+		DataReadTask t = new DataReadTask(cb);
 		DataQuery q = new DataQuery() {
 			@Override
 			public EntryList execute() {

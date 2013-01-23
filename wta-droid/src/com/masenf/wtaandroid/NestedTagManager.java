@@ -14,7 +14,6 @@ import com.masenf.core.IonBackButtonPressed;
 import com.masenf.core.StackItem;
 import com.masenf.core.async.callbacks.DataReadCallback;
 import com.masenf.core.data.EntryList;
-import com.masenf.core.progress.IProgressManager;
 import com.masenf.wtaandroid.adapters.TagListAdapter;
 import com.masenf.wtaandroid.async.DataReadTaskFactory;
 import com.masenf.wtaandroid.data.TagEntry;
@@ -33,7 +32,7 @@ public class NestedTagManager extends EntryClickHandler implements OnItemClickLi
 	private DataReadTaskFactory dtf;
 	private StackItem current_item = null;
 	
-	public NestedTagManager(Activity act, final ListView lv, final TagListAdapter ad, IProgressManager pg) {
+	public NestedTagManager(Activity act, final ListView lv, final TagListAdapter ad) {
 		this.lv = lv;
 		this.ad = ad;
 		this.act = act;
@@ -52,7 +51,7 @@ public class NestedTagManager extends EntryClickHandler implements OnItemClickLi
 						}
 						adjustStack();
 					}
-				}, pg);
+				});
 		
 		reset();
 	}

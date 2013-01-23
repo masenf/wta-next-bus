@@ -9,7 +9,6 @@ import org.json.JSONObject;
 
 import com.masenf.core.async.JSONRequestTask;
 import com.masenf.core.async.callbacks.RequestCallback;
-import com.masenf.core.progress.IProgressManager;
 import com.masenf.wtaandroid.R;
 import com.masenf.wtaandroid.WtaActivity;
 import com.masenf.wtaandroid.adapters.ResultsListAdapter;
@@ -106,7 +105,7 @@ public class SearchFragment extends WtaFragment implements OnItemClickListener {
 			    	}
 				}
 				
-			},(IProgressManager) getActivity()).executeOnExecutor(JSONRequestTask.THREAD_POOL_EXECUTOR, u);
+			}).executeOnExecutor(JSONRequestTask.THREAD_POOL_EXECUTOR, u);
 		} catch (MalformedURLException e) {
 			Log.d(TAG,"Malformed url: " + url);
 		}

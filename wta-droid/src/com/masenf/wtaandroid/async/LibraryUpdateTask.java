@@ -6,22 +6,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.masenf.core.async.BaseTask;
-import com.masenf.core.progress.IProgressManager;
-import com.masenf.core.progress.ProgressUpdate;
+import com.masenf.core.async.ProgressReportingTask;
 import com.masenf.wtaandroid.data.WtaDatastore;
 import com.masenf.wtaandroid.data.WtaDatastore.TagEntryType;
 
-public class LibraryUpdateTask extends BaseTask<JSONObject, Integer> {
+public class LibraryUpdateTask extends ProgressReportingTask<JSONObject, Integer> {
 	public static final String TAG = "LibraryUpdateTask";
 	private WtaDatastore d = null;
 
 	private int total_records = 1;
 	private int raw_progress = 0;
 	
-	public LibraryUpdateTask(WtaDatastore d, IProgressManager pg) {
-		if (pg != null)
-			setProgressManager(pg, UUID.randomUUID().toString());
+	public LibraryUpdateTask(WtaDatastore d) {
+		setTag(UUID.randomUUID().toString());
 		this.d = d;
 	}
 	@Override

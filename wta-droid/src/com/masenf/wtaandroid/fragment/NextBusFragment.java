@@ -11,7 +11,6 @@ import com.masenf.core.async.JSONRequestTask;
 import com.masenf.core.async.callbacks.DataReadCallback;
 import com.masenf.core.async.callbacks.RequestCallback;
 import com.masenf.core.data.EntryList;
-import com.masenf.core.progress.IProgressManager;
 import com.masenf.wtaandroid.R;
 import com.masenf.wtaandroid.WtaActivity;
 import com.masenf.wtaandroid.adapters.TimesListAdapter;
@@ -55,7 +54,7 @@ public class NextBusFragment extends WtaFragment {
 										else
 											isFavorite(false);
 									}
-								}, null);	// don't update progress for this task
+								});	// don't update progress for this task
 	}
 	@Override
     public void onViewCreated(View v, Bundle savedInstanceState) {
@@ -113,7 +112,7 @@ public class NextBusFragment extends WtaFragment {
 					if (a != null)
 						a.setReload(false);		// don't reload the data next time
 				}
-			}, (IProgressManager) getActivity()).executeOnExecutor(JSONRequestTask.THREAD_POOL_EXECUTOR, u);
+			}).executeOnExecutor(JSONRequestTask.THREAD_POOL_EXECUTOR, u);
 		} catch (MalformedURLException e) {
 			Log.e(TAG,"Malformed url: " + url);
 		}

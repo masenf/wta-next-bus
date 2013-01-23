@@ -8,7 +8,7 @@ import java.net.URL;
 
 import android.util.Log;
 
-public abstract class HTTPRequestTask<Params, Result> extends BaseTask<Params, Result> {
+public abstract class HTTPRequestTask<Params, Result> extends ProgressReportingTask<Params, Result> {
 
 	private static final String TAG = "HTTPRequestTask";
 	protected static int BufferSz = 1024;		// 1kb buffer

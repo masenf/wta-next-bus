@@ -7,15 +7,13 @@ import com.masenf.core.async.callbacks.DataReadCallback;
 import com.masenf.core.data.BaseEntry;
 import com.masenf.core.data.DataQuery;
 import com.masenf.core.data.EntryList;
-import com.masenf.core.progress.IProgressManager;
 
-public class DataReadTask extends BaseTask<DataQuery, EntryList> {
+public class DataReadTask extends ProgressReportingTask<DataQuery, EntryList> {
 
 	private DataReadCallback cb;
-	public DataReadTask(DataReadCallback cb, IProgressManager pg) {
+	public DataReadTask(DataReadCallback cb) {
 		this.cb = cb;
-		if (pg != null)
-			setProgressManager(pg, UUID.randomUUID().toString());
+		setTag(UUID.randomUUID().toString());
 	}
 	@Override
 	protected EntryList doInBackground(DataQuery... params) {

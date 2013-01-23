@@ -1,6 +1,6 @@
 package com.masenf.core.async;
 
-import com.masenf.core.progress.IProgressManager;
+import com.masenf.core.progress.ProgressManager;
 import com.masenf.core.progress.ProgressCallback;
 import com.masenf.core.progress.ProgressItem;
 import com.masenf.core.progress.ProgressUpdate;
@@ -8,15 +8,15 @@ import com.masenf.core.progress.ProgressUpdate;
 import android.os.AsyncTask;
 import android.util.Log;
 
-public abstract class BaseTask<Params, Result> extends AsyncTask<Params, ProgressUpdate, Result> {
+public abstract class ProgressReportingTask<Params, Result> extends AsyncTask<Params, ProgressUpdate, Result> {
 
 	private static final String TAG = "BaseTask";
-	protected IProgressManager pg = null;
+	protected ProgressManager pg = null;
 	private String tag = "Default";
 	private String error = "";
 	
-	public void setProgressManager(IProgressManager ipm, String tag) {
-		pg = ipm;
+	public void setTag(String tag) {
+		pg = ProgressManager.getInstance();
 		this.tag = tag;
 	}
 	private ProgressCallback getProgressCallback() {

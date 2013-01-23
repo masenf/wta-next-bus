@@ -14,7 +14,6 @@ import android.widget.ListView;
 import com.masenf.core.TabNavActivity;
 import com.masenf.core.async.JSONRequestTask;
 import com.masenf.core.async.callbacks.RequestCallback;
-import com.masenf.core.progress.IProgressManager;
 import com.masenf.wtaandroid.NestedTagManager;
 import com.masenf.wtaandroid.WtaActivity;
 import com.masenf.wtaandroid.adapters.TagListAdapter;
@@ -29,7 +28,6 @@ public class BrowseFragment extends WtaFragment {
 	 * It also contains the code for starting a library fetch */
 	
 	private static final String TAG = "BrowseFragment";
-	private boolean long_update = false;
 
 	protected NestedTagManager nTm = null;
 	private TagListAdapter ad;
@@ -47,7 +45,7 @@ public class BrowseFragment extends WtaFragment {
 		// create a new NestedTagManager if we're coming up for the first time
 		if (nTm == null) {
 			Log.v(TAG,"onResume() - nTm NestedTagManaer is null, creating new instance for " + root_tag);
-			nTm = new NestedTagManager(getActivity(), getListView(), ad, (WtaActivity) getActivity());
+			nTm = new NestedTagManager(getActivity(), getListView(), ad);
 			
 			// Register Back button callback with parent activity
 			TabNavActivity a = (TabNavActivity) getActivity();
@@ -109,10 +107,10 @@ public class BrowseFragment extends WtaFragment {
 					e.commit();
 					// call a LibraryUpdateTask to deserialize the JSON and commit the data
 					WtaDatastore d = WtaDatastore.getInstance(getActivity());
-					LibraryUpdateTask t = new LibraryUpdateTask(d, (IProgressManager) getActivity());
+					LibraryUpdateTask t = new LibraryUpdateTask(d);
 					t.executeOnExecutor(LibraryUpdateTask.THREAD_POOL_EXECUTOR, result);
 				}
-			}, (IProgressManager) getActivity()).executeOnExecutor(JSONRequestTask.THREAD_POOL_EXECUTOR, u);
+			}).executeOnExecutor(JSONRequestTask.THREAD_POOL_EXECUTOR, u);
 		} catch (MalformedURLException e) {
 			Log.e(TAG,"Malformed url: " + url);
 		}
