@@ -298,9 +298,6 @@ public class WtaDatastore {
 	public long rmFavorite(int stop_id) {
 		return rmTagFromLocation(stop_id, TAG_FAVORITES);
 	}
-	public Cursor getFavorites(){
-		return getLocations(TAG_FAVORITES);
-	}
 	public long addFavorite(int stop_id, String name) {
 		return addLocation(TAG_FAVORITES, stop_id, name, null);
 	}
@@ -309,9 +306,6 @@ public class WtaDatastore {
 	}
 	public long addRecent(int stop_id, String name) {
 		return addLocation(TAG_RECENT, stop_id, name, null);
-	}
-	public Cursor getRecent() {
-		return getLocations(TAG_RECENT);
 	}
 	public void clrRecent() {
 		Integer tag_id = getTagId(TAG_RECENT);

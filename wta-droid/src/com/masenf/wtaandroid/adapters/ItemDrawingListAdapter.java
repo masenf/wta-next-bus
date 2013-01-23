@@ -1,5 +1,13 @@
 package com.masenf.wtaandroid.adapters;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.masenf.wtaandroid.DrawingItem;
+import com.masenf.wtaandroid.DrawingItemList;
+import com.masenf.wtaandroid.data.BaseEntry;
+import com.masenf.wtaandroid.data.EntryList;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,43 +15,46 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import com.masenf.wtaandroid.data.BaseEntry;
-import com.masenf.wtaandroid.data.EntryList;
 
-public class BaseTaskListAdapter extends BaseAdapter {
-
-	private static final String TAG = "BaseTaskListAdapter";
-	private EntryList items = new EntryList();
+public class ItemDrawingListAdapter<T extends DrawingItemList<?>> extends BaseAdapter {
+	private static final String TAG = "ItemDrawingListAdapter";
+	protected T items;
 	protected Context ctx;
 	
-	public BaseTaskListAdapter(Context ctx) {
+	public ItemDrawingListAdapter(Context ctx) {
 		this.ctx = ctx;
 	}
-
 	public void restoreAdapterState(Bundle ad_state) {
 		if (ad_state != null) {
 			if (ad_state.containsKey("items")) {
-				setData((EntryList) ad_state.getSerializable("items"));
+				setData((T) ad_state.getSerializable("items"));
 				Log.d(TAG, "restoreAdapterState() - restored items for " + getClass().getName());
 			}
 		}
 	}
 	public Bundle saveAdapterState() {
 		Bundle ad_state = new Bundle();
-		ad_state.putSerializable("items", items);
-		Log.d(TAG, "saveAdapterState() - bundled items for " + getClass().getName());
+		if (items != null) {
+			ad_state.putSerializable("items", items);
+			Log.d(TAG, "saveAdapterState() - bundled items for " + getClass().getName());
+		}
 		return ad_state;
 	}
-	public void setData(EntryList data) {
+	public void setData(T data) {
 		items = data;
+	}
+	public T getData() {
+		return items;
 	}
 	@Override
 	public int getCount() {
+		if (items == null)
+			return 0;
 		return items.size();
 	}
 
 	@Override
-	public BaseEntry getItem(int i) {
+	public DrawingItem getItem(int i) {
 		return items.get(i);
 	}
 
@@ -54,8 +65,8 @@ public class BaseTaskListAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int pos, View convertView, ViewGroup parent) {
-		//Log.v(TAG,"Fetching view for position " + pos);	
-		BaseEntry item = getItem(pos);
+		//Log.v(TAG,"getView, position " + pos + " for " + getClass().getName());	
+		DrawingItem item = getItem(pos);
 		
 		if (convertView==null || 
 			convertView.getTag().getClass().equals(item.getClass()) == false)	// we're not recycling

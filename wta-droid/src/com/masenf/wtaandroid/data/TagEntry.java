@@ -57,9 +57,8 @@ public class TagEntry extends BaseEntry {
 			txt_left.setText("");
 			txt_left.setCompoundDrawables(folder, null, null, null);
 			txt_right.setText(name);
-			convertView.setTag(this);
 			
-			return convertView;
+			return super.updateView(convertView);
 		}
 		@Override
 		public void handleClick(EntryClickHandler ad) {

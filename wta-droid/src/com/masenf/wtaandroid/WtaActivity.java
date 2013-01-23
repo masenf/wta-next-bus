@@ -1,19 +1,17 @@
 package com.masenf.wtaandroid;
 
-import com.masenf.wtaandroid.async.callbacks.ProgressCallback;
 import com.masenf.wtaandroid.data.WtaDatastore;
 import com.masenf.wtaandroid.fragment.FavoritesFragment;
 import com.masenf.wtaandroid.fragment.NextBusFragment;
 import com.masenf.wtaandroid.fragment.SearchFragment;
 import com.masenf.wtaandroid.fragment.BrowseFragment;
-import com.masenf.wtaandroid.fragment.TabFragment;
 
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.os.Bundle;
 import android.util.Log;
 
-public class WtaActivity extends TabNavActivity implements IGlobalProgress {
+public class WtaActivity extends TabNavActivity {
 
 	private static final String TAG = "WtaActivity";
 	public static final String wAPI = "http://mashed-potatoes.with-linux.com:8080/";
@@ -105,11 +103,5 @@ public class WtaActivity extends TabNavActivity implements IGlobalProgress {
     public void lookupTimesForStop(int stop_id)
     {
     	lookupTimesForStop(stop_id, "");
-    }
-    @Override
-    public ProgressCallback getGlobalProgressCallback() {
-    	String sel_tag = getActionBar().getSelectedTab().getTag().toString();
-    	TabFragment sel_frag = (TabFragment) getFragmentManager().findFragmentByTag(sel_tag);
-    	return sel_frag.getProgressCallback();
     }
 }

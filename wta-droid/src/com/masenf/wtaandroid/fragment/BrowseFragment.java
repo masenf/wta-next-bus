@@ -11,15 +11,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ListView;
 
-import com.masenf.wtaandroid.IGlobalProgress;
 import com.masenf.wtaandroid.NestedTagManager;
 import com.masenf.wtaandroid.TabNavActivity;
 import com.masenf.wtaandroid.WtaActivity;
-import com.masenf.wtaandroid.adapters.BaseTaskListAdapter;
+import com.masenf.wtaandroid.adapters.TagListAdapter;
 import com.masenf.wtaandroid.async.JSONRequestTask;
 import com.masenf.wtaandroid.async.LibraryUpdateTask;
 import com.masenf.wtaandroid.async.callbacks.RequestCallback;
 import com.masenf.wtaandroid.data.WtaDatastore;
+import com.masenf.wtaandroid.progress.IProgressManager;
 
 public class BrowseFragment extends WtaFragment {
 	/* A browse fragment exposes a NestedTagManager and a list view for navigating 
@@ -31,8 +31,8 @@ public class BrowseFragment extends WtaFragment {
 	private static final String TAG = "BrowseFragment";
 	private boolean long_update = false;
 
-	private NestedTagManager nTm = null;
-	private BaseTaskListAdapter ad;
+	protected NestedTagManager nTm = null;
+	private TagListAdapter ad;
 	protected String root_tag = WtaDatastore.TAG_ROOT;
 
 	@Override
@@ -42,7 +42,7 @@ public class BrowseFragment extends WtaFragment {
 		// create a new list adapter if we're coming up for the first time
 		if (ad == null) {
 			Log.v(TAG,"onResume() - ad BaseTaskListAdapter is null, creating new instance");
-			ad = new BaseTaskListAdapter(this.getActivity());
+			ad = new TagListAdapter(this.getActivity());
 		}
 		// create a new NestedTagManager if we're coming up for the first time
 		if (nTm == null) {
@@ -84,10 +84,7 @@ public class BrowseFragment extends WtaFragment {
 		Bundle inState = getInstanceState();
 		Bundle stack_state = nTm.saveStackState();
 		inState.putBundle("stack_state", stack_state);
-		
-		if (long_update) {
-			getProgressCallback().updateError("Continuing to unpack library data, please be patient");
-		}
+
 		super.onPause();
 	}
     public void doFetchData()
@@ -112,12 +109,10 @@ public class BrowseFragment extends WtaFragment {
 					e.commit();
 					// call a LibraryUpdateTask to deserialize the JSON and commit the data
 					WtaDatastore d = WtaDatastore.getInstance(getActivity());
-					LibraryUpdateTask t = new LibraryUpdateTask(d, (IGlobalProgress) getActivity());
+					LibraryUpdateTask t = new LibraryUpdateTask(d, (IProgressManager) getActivity());
 					t.executeOnExecutor(LibraryUpdateTask.THREAD_POOL_EXECUTOR, result);
-					getProgressCallback().updateError("Unpacking library data on first use, please be patient. This will continue in the background");
-					long_update = true;
 				}
-			}, (IGlobalProgress) getActivity()).executeOnExecutor(JSONRequestTask.THREAD_POOL_EXECUTOR, u);
+			}, (IProgressManager) getActivity()).executeOnExecutor(JSONRequestTask.THREAD_POOL_EXECUTOR, u);
 		} catch (MalformedURLException e) {
 			Log.e(TAG,"Malformed url: " + url);
 		}

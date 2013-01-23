@@ -10,5 +10,7 @@ public class FavoritesFragment extends BrowseFragment {
 	public void onResume() {
 		root_tag = WtaDatastore.TAG_FAVORITES;
 		super.onResume();
+		nTm.reset();
+		nTm.setLevel(root_tag);		// always reload the data
 	}
 }

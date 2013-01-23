@@ -31,7 +31,7 @@ public class GenericTabListener<T extends Fragment> implements TabListener {
 		if (mFrag == null) {
 			Log.v(TAG, "onTabSelected() - instantiating " + mTag);
 			mFrag = Fragment.instantiate(mAct, mClz.getName());
-			ft.add(android.R.id.content, mFrag, mTag);
+			ft.add(R.id.main_fragment_placeholder, mFrag, mTag);
 		} else {
 			Log.v(TAG, "onTabSelected() - reattaching " + mTag);
 			ft.attach(mFrag);

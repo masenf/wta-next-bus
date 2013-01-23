@@ -55,8 +55,7 @@ public class LocationEntry extends BaseEntry {
 				txt_location.setText(name);
 			else
 				txt_location.setText(alias);
-			convertView.setTag(this);
-			return convertView;
+			return super.updateView(convertView);
 		}
 		@Override
 		public void handleClick(EntryClickHandler tg) {

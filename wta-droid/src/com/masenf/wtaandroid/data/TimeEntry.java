@@ -50,13 +50,6 @@ public class TimeEntry extends BaseEntry {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-
-	@Override
-	public View updateView(View convertView) {
-		// TODO Auto-generated method stub
-		return convertView;
-	}
-
 	@Override
 	public void handleClick(EntryClickHandler entryClickHandler) {
 		// TODO Auto-generated method stub

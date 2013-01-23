@@ -7,13 +7,13 @@ import java.net.URLEncoder;
 
 import org.json.JSONObject;
 
-import com.masenf.wtaandroid.IGlobalProgress;
 import com.masenf.wtaandroid.R;
 import com.masenf.wtaandroid.WtaActivity;
 import com.masenf.wtaandroid.adapters.ResultsListAdapter;
 import com.masenf.wtaandroid.async.JSONRequestTask;
 import com.masenf.wtaandroid.async.callbacks.RequestCallback;
 import com.masenf.wtaandroid.data.WtaDatastore;
+import com.masenf.wtaandroid.progress.IProgressManager;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -106,7 +106,7 @@ public class SearchFragment extends WtaFragment implements OnItemClickListener {
 			    	}
 				}
 				
-			},(IGlobalProgress) getActivity()).executeOnExecutor(JSONRequestTask.THREAD_POOL_EXECUTOR, u);
+			},(IProgressManager) getActivity()).executeOnExecutor(JSONRequestTask.THREAD_POOL_EXECUTOR, u);
 		} catch (MalformedURLException e) {
 			Log.d(TAG,"Malformed url: " + url);
 		}

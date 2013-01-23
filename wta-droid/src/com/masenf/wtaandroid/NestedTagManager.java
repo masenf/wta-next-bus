@@ -1,6 +1,5 @@
 package com.masenf.wtaandroid;
 
-import java.io.Serializable;
 import java.util.Stack;
 
 import android.app.Activity;
@@ -10,18 +9,19 @@ import android.util.Log;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-import com.masenf.wtaandroid.adapters.BaseTaskListAdapter;
+import com.masenf.wtaandroid.adapters.TagListAdapter;
 import com.masenf.wtaandroid.async.DataReadTaskFactory;
 import com.masenf.wtaandroid.async.callbacks.DataReadCallback;
 import com.masenf.wtaandroid.data.EntryList;
 import com.masenf.wtaandroid.data.TagEntry;
 import com.masenf.wtaandroid.data.WtaDatastore;
+import com.masenf.wtaandroid.progress.IProgressManager;
 
 public class NestedTagManager extends EntryClickHandler implements OnItemClickListener, IonBackButtonPressed {
 
 	private static final String TAG = "NestedTagManager";
 	ListView lv;
-	BaseTaskListAdapter ad;
+	TagListAdapter ad;
 	private String fragmentTag = "";
 	private Activity act;
 	
@@ -30,7 +30,7 @@ public class NestedTagManager extends EntryClickHandler implements OnItemClickLi
 	private DataReadTaskFactory dtf;
 	private StackItem current_item = null;
 	
-	public NestedTagManager(Activity act, final ListView lv, final BaseTaskListAdapter ad, IGlobalProgress pg) {
+	public NestedTagManager(Activity act, final ListView lv, final TagListAdapter ad, IProgressManager pg) {
 		this.lv = lv;
 		this.ad = ad;
 		this.act = act;
@@ -69,15 +69,6 @@ public class NestedTagManager extends EntryClickHandler implements OnItemClickLi
 		current_item = new StackItem(tag, 0);
 		reloadData();
 	}
-	private class StackItem implements Serializable {
-		private static final long serialVersionUID = -7116711663472846064L;
-		String ltag;			// the level tag, identifies this level
-		int list_pos;		// the FirstSelectedIndex
-		public StackItem (String ltag, int list_pos) {
-			this.ltag = ltag;
-			this.list_pos = list_pos;
-		}
-	}
 	public void reset() {
 		Log.v(TAG,"Instantiating new Stack for " + getClass().getName());
 		s = new Stack<StackItem>();
@@ -110,6 +101,7 @@ public class NestedTagManager extends EntryClickHandler implements OnItemClickLi
 	public Bundle saveStackState() {
 		Bundle p = new Bundle();
 		p.putBundle("ad_state", ad.saveAdapterState());
+		current_item.list_pos = lv.getFirstVisiblePosition();
 		p.putSerializable("current_item", current_item);
 		p.putSerializable("stack", s);
 		Log.v(TAG,"saveStackState() - saved stack state");
@@ -121,8 +113,10 @@ public class NestedTagManager extends EntryClickHandler implements OnItemClickLi
 				this.s = (Stack<StackItem>) p.getSerializable("stack");
 			if (p.containsKey("current_item"))
 				current_item = (StackItem) p.getSerializable("current_item");
-			if (p.containsKey("ad_state"))
+			if (p.containsKey("ad_state")) {
 				ad.restoreAdapterState(p.getBundle("ad_state"));
+				adjustStack();
+			}
 			else
 				reloadData();
 			Log.v(TAG,"restoreStackState() - restored stack state");

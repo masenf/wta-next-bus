@@ -1,12 +1,15 @@
 package com.masenf.wtaandroid.async;
 
+import java.util.UUID;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.masenf.wtaandroid.IGlobalProgress;
 import com.masenf.wtaandroid.data.WtaDatastore;
 import com.masenf.wtaandroid.data.WtaDatastore.TagEntryType;
+import com.masenf.wtaandroid.progress.IProgressManager;
+import com.masenf.wtaandroid.progress.ProgressUpdate;
 
 public class LibraryUpdateTask extends BaseTask<JSONObject, Integer> {
 	public static final String TAG = "LibraryUpdateTask";
@@ -15,12 +18,16 @@ public class LibraryUpdateTask extends BaseTask<JSONObject, Integer> {
 	private int total_records = 1;
 	private int raw_progress = 0;
 	
-	public LibraryUpdateTask(WtaDatastore d, IGlobalProgress pg) {
+	public LibraryUpdateTask(WtaDatastore d, IProgressManager pg) {
 		if (pg != null)
-			setGlobalProgress(pg);
+			setProgressManager(pg, UUID.randomUUID().toString());
 		this.d = d;
 	}
-
+	@Override
+	protected void onPreExecute() {
+		super.onPreExecute();
+		postError("Unpacking library data on first use, please be patient. This will continue in the background");
+	}
 	@Override
 	protected Integer doInBackground(JSONObject... params) {
 		int count = params.length;
@@ -41,7 +48,7 @@ public class LibraryUpdateTask extends BaseTask<JSONObject, Integer> {
 						total_records += stops.length();
 					}
 				}
-				setProgressMax(total_records);
+				postProgressMax(total_records);
 				
 				// now process the entries
 				for (int i = 0; i < landmarks.length(); i++) {
@@ -61,7 +68,7 @@ public class LibraryUpdateTask extends BaseTask<JSONObject, Integer> {
 							// add the stops to the location
 							d.addLocation(location_name, stop_id, name, alias);
 							raw_progress += 1;
-							this.publishProgress(raw_progress);
+							postProgress(raw_progress);
 						}
 						// add the location to the landmark
 						long tag_id = d.createOrUpdateTag(null, location_name, null, false);

@@ -1,6 +1,6 @@
-package com.masenf.wtaandroid.async.callbacks;
+package com.masenf.wtaandroid.progress;
 
-
+import com.masenf.wtaandroid.async.callbacks.BaseCallback;
 
 public class ProgressCallback extends BaseCallback {
 	// basic progress reporting
@@ -8,7 +8,6 @@ public class ProgressCallback extends BaseCallback {
 	public void stopProgress() { };
 	public void updateError(String msg) { };
 	
-	// numeric progress
-	public void startProgress(Integer max) { };
-	public void onProgress(Integer percent) { };
+	// detailed updates
+	public void onProgress(ProgressUpdate update) { };
 }

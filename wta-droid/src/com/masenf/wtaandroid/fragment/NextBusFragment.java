@@ -7,13 +7,16 @@ import java.net.URLEncoder;
 
 import org.json.JSONObject;
 
-import com.masenf.wtaandroid.IGlobalProgress;
 import com.masenf.wtaandroid.R;
 import com.masenf.wtaandroid.WtaActivity;
 import com.masenf.wtaandroid.adapters.TimesListAdapter;
+import com.masenf.wtaandroid.async.DataReadTaskFactory;
 import com.masenf.wtaandroid.async.JSONRequestTask;
 import com.masenf.wtaandroid.async.callbacks.RequestCallback;
+import com.masenf.wtaandroid.async.callbacks.DataReadCallback;
+import com.masenf.wtaandroid.data.EntryList;
 import com.masenf.wtaandroid.data.WtaDatastore;
+import com.masenf.wtaandroid.progress.IProgressManager;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -28,15 +31,31 @@ public class NextBusFragment extends WtaFragment {
 
 	private TextView stop_id_label;
 	private TextView location_label;
+	private int stop_id;
+	private String location;
 	
 	private Button btn_mod_fav;
 	private TimesListAdapter ad;
 	private WtaDatastore d;
 	
+	private DataReadTaskFactory favoritesTasks;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setLayoutId(R.layout.nextbus_fragment);
+		
+		// set up a task factory which returns the favorite status
+		favoritesTasks = new DataReadTaskFactory(WtaDatastore.getInstance(getActivity()),
+								new DataReadCallback () {
+									@Override
+									public void updateData(EntryList result) {
+										if (result.size() > 0)
+											isFavorite(true);
+										else
+											isFavorite(false);
+									}
+								}, null);	// don't update progress for this task
 	}
 	@Override
     public void onViewCreated(View v, Bundle savedInstanceState) {
@@ -61,8 +80,8 @@ public class NextBusFragment extends WtaFragment {
 		super.onResume();
 		
 		WtaActivity a = (WtaActivity) getActivity();
-		final int stop_id = a.getSelected_stop();
-		final String location = a.getSelected_location();
+		stop_id = a.getSelected_stop();
+		location = a.getSelected_location();
 		if (a.isReload()) {
 			doFetchData(stop_id);
 		}
@@ -94,23 +113,28 @@ public class NextBusFragment extends WtaFragment {
 					if (a != null)
 						a.setReload(false);		// don't reload the data next time
 				}
-			}, (IGlobalProgress) getActivity()).executeOnExecutor(JSONRequestTask.THREAD_POOL_EXECUTOR, u);
+			}, (IProgressManager) getActivity()).executeOnExecutor(JSONRequestTask.THREAD_POOL_EXECUTOR, u);
 		} catch (MalformedURLException e) {
 			Log.e(TAG,"Malformed url: " + url);
 		}
     }
     private void updateStopInfoViews(final int stop_id, final String location) {
-		String fav_label = "";
 		stop_id_label.setText((CharSequence) String.valueOf(stop_id));
 		location_label.setText((CharSequence) location);
+		favoritesTasks.isFavorite(stop_id);
+		Log.d(TAG,"updateStopInfoViews() - stop_id_label = " + stop_id +
+				  ", location_label = " + location);
+    }
+    private void isFavorite(boolean fav) {
+		String fav_label = "";
 		
-		if (d.isFavorite(stop_id)) {
+		if (fav) {
 			fav_label = "Remove Favorite";
 			btn_mod_fav.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					d.rmFavorite(stop_id);
-					updateStopInfoViews(stop_id, location);
+					isFavorite(false);
 				}
 			});
 		} else {
@@ -119,13 +143,11 @@ public class NextBusFragment extends WtaFragment {
 				@Override
 				public void onClick(View v) {
 					d.addFavorite(stop_id, location);
-					updateStopInfoViews(stop_id, location);
+					isFavorite(true);
 				}
 			});
 		}
 		btn_mod_fav.setText(fav_label);
-		
-		Log.d(TAG,"updateStopInfoViews() - stop_id_label = " + stop_id +
-				  ", location_label = " + location + ", fav_label = " + fav_label);
+		Log.v(TAG,"isFavorite? fav_label = " + fav_label);
     }
 }

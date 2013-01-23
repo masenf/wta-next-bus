@@ -1,9 +1,10 @@
 package com.masenf.wtaandroid.data;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
-public class EntryList extends ArrayList<BaseEntry> implements Serializable {
+import com.masenf.wtaandroid.DrawingItemList;
+
+public class EntryList extends DrawingItemList<BaseEntry> implements Serializable {
 
 	/**
 	 * 
