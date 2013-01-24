@@ -1,0 +1,3 @@
+[submodule "mf-core-android"]
+	path = mf-core-android
+	url = github.com:masenf/mf-core-android
