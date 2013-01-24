@@ -18,7 +18,6 @@ public class LibraryUpdateTask extends ProgressReportingTask<JSONObject, Integer
 	private int raw_progress = 0;
 	
 	public LibraryUpdateTask(WtaDatastore d) {
-		setTag(UUID.randomUUID().toString());
 		this.d = d;
 	}
 	@Override
