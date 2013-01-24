@@ -1,0 +1,3 @@
+[submodule "wta-droid/src/com/masenf/core"]
+	path = wta-droid/src/com/masenf/core
+	url = github.com:masenf/mf-core-android
