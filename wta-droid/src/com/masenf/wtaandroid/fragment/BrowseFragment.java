@@ -51,6 +51,11 @@ public class BrowseFragment extends WtaFragment {
 			TabNavActivity a = (TabNavActivity) getActivity();
 			nTm.setFragmentTag(getTag());		// so the dispatcher knows if this fragment is visible
 			a.registerBackButtonCallback(nTm);	// we need the back button for folder navigation
+		} else {
+			// update refs if we're already up
+			nTm.setAdapter(ad);
+			nTm.setListView(getListView());
+			nTm.setActivity(getActivity());
 		}
 		
 		// fetch saved state

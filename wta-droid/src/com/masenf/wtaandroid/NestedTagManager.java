@@ -6,11 +6,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 import com.masenf.core.EntryClickHandler;
 import com.masenf.core.IonBackButtonPressed;
+import com.masenf.core.NullAnimationProto;
 import com.masenf.core.StackItem;
 import com.masenf.core.async.callbacks.DataReadCallback;
 import com.masenf.core.data.EntryList;
@@ -22,6 +26,7 @@ import com.masenf.wtaandroid.data.WtaDatastore;
 public class NestedTagManager extends EntryClickHandler implements OnItemClickListener, IonBackButtonPressed {
 
 	private static final String TAG = "NestedTagManager";
+	private static final int slide_out_msec = 280;
 	ListView lv;
 	TagListAdapter ad;
 	private String fragmentTag = "";
@@ -58,6 +63,15 @@ public class NestedTagManager extends EntryClickHandler implements OnItemClickLi
 	public void setFragmentTag(String ft) {
 		fragmentTag = ft;
 	}
+	public void setListView(ListView lv) {
+		this.lv = lv;
+	}
+	public void setAdapter(TagListAdapter ad) {
+		this.ad = ad;
+	}
+	public void setActivity(Activity act) {
+		this.act = act;
+	}
 	protected void adjustStack() {
 		if (lv == null)
 			return;
@@ -80,7 +94,17 @@ public class NestedTagManager extends EntryClickHandler implements OnItemClickLi
 		if (s.isEmpty() == false) {
 			current_item = s.pop();
 			Log.v(TAG,"pop() - going up one level to " + current_item.getLtag());
-			reloadData();
+			final Animation out = new TranslateAnimation(0, lv.getWidth(), 0, 0);
+			out.setDuration(slide_out_msec);
+			out.setInterpolator(new AccelerateDecelerateInterpolator());
+			out.setAnimationListener(new NullAnimationProto() {
+				@Override
+				public void onAnimationEnd(Animation arg0) {
+					reloadData();
+				}
+			});
+			lv.startAnimation(out);
+			Log.v(TAG,"pop() - started animation on " + lv.toString());
 			return true;
 		}
 		return false;
@@ -90,12 +114,23 @@ public class NestedTagManager extends EntryClickHandler implements OnItemClickLi
 		lv.setAdapter(null);
 		dtf.getTagsAndLocations(current_item.getLtag());	// spawn the fetch task
 	}
-	public void push(String next_ltag) {
+	public void push(final String next_ltag) {
 		current_item.setListPos(lv.getFirstVisiblePosition());
 		Log.v(TAG,"push() - saving state for " + current_item.getLtag() + ", " + current_item.getListPos());
 		s.push(current_item);
 		Log.v(TAG,"push() - state saved, smash the data into " + next_ltag);
-		setLevel(next_ltag);
+		final Animation out = new TranslateAnimation(0, -lv.getWidth(), 0, 0);
+		out.setDuration(slide_out_msec);
+		out.setInterpolator(new AccelerateDecelerateInterpolator());
+		out.setAnimationListener(new NullAnimationProto() {
+			@Override
+			public void onAnimationEnd(Animation arg0) {
+				setLevel(next_ltag);
+			}
+		});
+		lv.startAnimation(out);
+		Log.v(TAG,"push() - started animation on " + lv.toString());
+
 	}
 	public StackItem getCurrentItem() {
 		return current_item;

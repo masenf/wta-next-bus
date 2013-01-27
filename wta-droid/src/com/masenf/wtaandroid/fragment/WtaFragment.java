@@ -31,8 +31,8 @@ public abstract class WtaFragment extends StateSavingFragment {
 	@Override
 	public void onViewCreated(View v, Bundle savedInstanceState) {
 		super.onViewCreated(v, savedInstanceState);
-		Log.d(TAG, "onViewCreated() - capturing ListView, lv for " + getClass().getName());
 		lv = (ListView) v.findViewById(android.R.id.list);
+		Log.d(TAG, "onViewCreated() - captured ListView, lv = " + lv.toString() + " for " + getClass().getName());
 	}
 	
 	public void setLayoutId(int layout) {
