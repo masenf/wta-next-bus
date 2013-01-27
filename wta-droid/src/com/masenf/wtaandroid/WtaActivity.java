@@ -2,6 +2,7 @@ package com.masenf.wtaandroid;
 
 import com.masenf.core.GenericTabListener;
 import com.masenf.core.TabNavActivity;
+import com.masenf.wtaandroid.async.DataWriteTaskFactory;
 import com.masenf.wtaandroid.data.WtaDatastore;
 import com.masenf.wtaandroid.fragment.FavoritesFragment;
 import com.masenf.wtaandroid.fragment.NextBusFragment;
@@ -17,6 +18,8 @@ public class WtaActivity extends TabNavActivity {
 
 	private static final String TAG = "WtaActivity";
 	public static final String wAPI = "http://mashed-potatoes.with-linux.com:8080/";
+	
+	private static WtaDatastore writableInstance;
 	
 	private int selected_stop;
 	private String selected_location;
@@ -45,6 +48,10 @@ public class WtaActivity extends TabNavActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // initialize the database!
+        WtaDatastore.initialize(this);
+        
     	Log.d(TAG,"onCreate() - creating actionbar tabs");
         ActionBar ab = getActionBar();
         ab.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -90,6 +97,9 @@ public class WtaActivity extends TabNavActivity {
     }
     public void lookupTimesForStop(int stop_id, String location)
     {
+    	// add the lookup to recent
+    	DataWriteTaskFactory dwtf = new DataWriteTaskFactory(null);
+    	dwtf.addRecent(stop_id, location);
     	prev_tab = getActionBar().getSelectedNavigationIndex();
     	selected_stop = stop_id;
     	selected_location = location;

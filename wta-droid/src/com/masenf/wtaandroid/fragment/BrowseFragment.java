@@ -111,7 +111,7 @@ public class BrowseFragment extends WtaFragment {
 					e.putBoolean("fetch_library", false);
 					e.commit();
 					// call a LibraryUpdateTask to deserialize the JSON and commit the data
-					WtaDatastore d = WtaDatastore.getInstance(getActivity());
+					WtaDatastore d = WtaDatastore.getWritableInstance();
 					LibraryUpdateTask t = new LibraryUpdateTask(d);
 					t.executeOnExecutor(LibraryUpdateTask.THREAD_POOL_EXECUTOR, result);
 				}
