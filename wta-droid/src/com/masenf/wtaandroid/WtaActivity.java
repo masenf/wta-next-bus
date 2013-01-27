@@ -88,12 +88,6 @@ public class WtaActivity extends TabNavActivity {
     	outState.putString("selected_location", selected_location);
     	super.onSaveInstanceState(outState);
     }
-    @Override
-    public void onDestroy() {
-    	Log.d(TAG,"onDestroy() - closing database");
-    	WtaDatastore.getInstance(this).close();
-    	super.onDestroy();
-    }
     public void lookupTimesForStop(int stop_id, String location)
     {
     	prev_tab = getActionBar().getSelectedNavigationIndex();

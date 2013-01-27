@@ -12,7 +12,7 @@ import android.widget.ListView;
 public abstract class WtaFragment extends StateSavingFragment {
 
 	private static final String TAG = "WtaFragment";
-	private int layout_id = R.layout.list_fragment;
+	private int layout_id = com.masenf.core.R.layout.list_fragment;
 	private ListView lv;
 	
 	public void onCreate(Bundle savedInstanceState) {
