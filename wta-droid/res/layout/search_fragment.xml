@@ -21,7 +21,7 @@
         android:hint="@string/search_hint" />
     
     <ProgressBar
-        android:id="@+id/search_progress"
+        android:id="@+id/progress_flat"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -1,4 +1,4 @@
-package com.masenf.wtaandroid;
+package com.masenf.wtaandroid.data;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -91,7 +91,6 @@ public class WtaDatastore {
 		
 		DatabaseHelper(Context ctx) {
 			super(ctx, DATABASE_NAME, null, DATABASE_VERSION);
-			Log.v(TAG,"Instantiating new database helper");
 			Resources res = ctx.getResources();
 		}
 		@Override
@@ -116,7 +115,6 @@ public class WtaDatastore {
 
 	// a Static factory function (this is just for fun)
 	public static WtaDatastore getInstance(Context ctx) throws SQLException {
-		Log.v(TAG,"getInstance called");
 		if (ins == null) {
 			ins = new WtaDatastore();
 			ins.dbHelper = new DatabaseHelper(ctx);
@@ -199,15 +197,12 @@ public class WtaDatastore {
 		return hasTag(fk, tag_id);
 	}
 	private boolean hasTag(long fk, Integer tag_id) {
-		Log.v(TAG,"Is " + fk + " tagged with '" + tag_id + "' ??");
 		Cursor c = db.query(TABLE_TAG_JOIN, new String[] { KEY_ID }, 
 				KEY_TAGID + " = ? AND " + KEY_FK + " = ?" , new String[] {tag_id.toString(), String.valueOf(fk)},
 				null,null,null);
 		if (c.getCount() > 0) {
-			Log.v(TAG,"Yep");
 			return true;
 		}
-		Log.v(TAG,"Nope");
 		return false;
 	}
 	public Cursor getLocations(String tag) {
@@ -303,9 +298,6 @@ public class WtaDatastore {
 	public long rmFavorite(int stop_id) {
 		return rmTagFromLocation(stop_id, TAG_FAVORITES);
 	}
-	public Cursor getFavorites(){
-		return getLocations(TAG_FAVORITES);
-	}
 	public long addFavorite(int stop_id, String name) {
 		return addLocation(TAG_FAVORITES, stop_id, name, null);
 	}
@@ -314,9 +306,6 @@ public class WtaDatastore {
 	}
 	public long addRecent(int stop_id, String name) {
 		return addLocation(TAG_RECENT, stop_id, name, null);
-	}
-	public Cursor getRecent() {
-		return getLocations(TAG_RECENT);
 	}
 	public void clrRecent() {
 		Integer tag_id = getTagId(TAG_RECENT);
