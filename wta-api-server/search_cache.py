@@ -1,7 +1,10 @@
 from collections import Counter
 import json
+import os
 
-CACHE_FILE = "landmarks.json"
+PATH = os.path.dirname(os.path.realpath(__file__))
+
+CACHE_FILE = os.path.join(PATH,"landmarks.json")
 
 class SearchCache(object):
 
