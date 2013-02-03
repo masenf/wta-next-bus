@@ -2,7 +2,7 @@ import sys
 import site
 import os
 
-ENVIRONPATH = "/srv/virtualenvs/wta-next-bus/lib/python3.3/site-packages"
+ENVIRONPATH = "/srv/virtualenvs/wta-api-server/lib/python3.3/site-packages"
 DEPLOYPATH = os.path.dirname(os.path.realpath(__file__))
 
 prev_path = list(sys.path)
