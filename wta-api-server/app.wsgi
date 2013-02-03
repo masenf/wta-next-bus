@@ -2,8 +2,8 @@ import sys
 import site
 import os
 
-DEPLOYPATH = "/home/deploy/wta-next-bus/wta-application-server"
 ENVIRONPATH = "/srv/virtualenvs/wta-next-bus/lib/python3.3/site-packages"
+DEPLOYPATH = os.path.dirname(os.path.realpath(__file__))
 
 prev_path = list(sys.path)
 site.addsitedir(ENVIRONPATH)
