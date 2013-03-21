@@ -9,5 +9,22 @@
     <string name="search_instruct">Search for an address</string>
     <string name="nextbus_stops">Next buses at stop # </string>
     
+    <string name="about">About&#8230;</string>
+    <string name="about_title">About WTA Next Bus</string>
+    <string name="about_content">This app shows the next 5 buses scheduled to stop at
+        a selected WTA bus stop (Whatcom County). You may browse stops by category on 
+        the Browse tab, you may also search for an intersection via the Search tab. 
+		Currently, searching for landmarks does not work.
+		
+		\n\nTap on a bus stop to view the next buses stopping there. From the Next Bus
+		tab, you have the option to add/remove the stop from favorites, or refresh
+		the displayed times. If these options are not displayed in the action bar,
+		they will be accessible from the context menu.
+		
+		\n\nFor more information, DM <b>@masenf</b> or visit <u><b>http://github.com/masenf/wta-next-bus</b></u>
+		</string>
+	<string name="about_url">https://github.com/masenf/wta-next-bus</string>
+	<string name="about_visit">Visit Github</string>
+	<string name="about_dismiss">Dismiss</string>
 
 </resources>

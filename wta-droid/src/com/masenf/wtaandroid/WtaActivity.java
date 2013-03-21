@@ -3,12 +3,17 @@ package com.masenf.wtaandroid;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.masenf.core.GenericTabListener;
 import com.masenf.core.TabNavActivity;
+import com.masenf.wtaandroid.fragment.AboutDialogFragment;
 import com.masenf.wtaandroid.fragment.BrowseFragment;
 import com.masenf.wtaandroid.fragment.FavoritesFragment;
 import com.masenf.wtaandroid.fragment.NextBusFragment;
@@ -58,6 +63,23 @@ public class WtaActivity extends TabNavActivity {
         
         ab.setSelectedNavigationItem(sel_tab);
 
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+    	MenuInflater mi = getMenuInflater();
+    	mi.inflate(R.menu.global_menu, menu);
+		return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected (MenuItem item)
+    {
+    	if (item.getItemId() == R.id.menu_show_about) {
+    		AboutDialogFragment adf = new AboutDialogFragment();
+    		adf.show(getFragmentManager(), "aboutBox");
+    		return true;
+    	}
+    	return false;
     }
     public void lookupTimesForStop(final int stop_id, final String location)
     {
