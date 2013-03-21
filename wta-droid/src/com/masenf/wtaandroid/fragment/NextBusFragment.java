@@ -23,7 +23,7 @@ import com.masenf.core.data.EntryList;
 import com.masenf.wtaandroid.R;
 import com.masenf.wtaandroid.adapters.TimesListAdapter;
 import com.masenf.wtaandroid.async.DataReadTaskFactory;
-import com.masenf.wtaandroid.data.WtaDatastore;
+import com.masenf.wtaandroid.async.DataWriteTaskFactory;
 
 public class NextBusFragment extends WtaFragment {
 	
@@ -40,9 +40,9 @@ public class NextBusFragment extends WtaFragment {
 	
 	private MenuItem menu_favorite_toggle;
 	private TimesListAdapter ad;
-	private WtaDatastore d;
 	
-	private DataReadTaskFactory favoritesTasks;
+	private DataReadTaskFactory checkFavoritesTask;
+	private DataWriteTaskFactory updateFavoritesTask;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -50,8 +50,7 @@ public class NextBusFragment extends WtaFragment {
 		setLayoutId(R.layout.nextbus_fragment);
 		
 		// set up a task factory which returns the favorite status
-		favoritesTasks = new DataReadTaskFactory(WtaDatastore.getInstance(getActivity()),
-								new DataReadCallback () {
+		checkFavoritesTask = new DataReadTaskFactory(new DataReadCallback () {
 									@Override
 									public void updateData(EntryList result) {
 										if (result.size() > 0)
@@ -61,6 +60,7 @@ public class NextBusFragment extends WtaFragment {
 									}
 								});	// don't update progress for this task
 		this.setHasOptionsMenu(true);
+		updateFavoritesTask = new DataWriteTaskFactory(null);
 	}
 	@Override
     public void onViewCreated(View v, Bundle savedInstanceState) {
@@ -77,7 +77,6 @@ public class NextBusFragment extends WtaFragment {
 			Log.v(TAG,"onResume() - TimesListAdapter ad is null, creating new instance");
 			ad = new TimesListAdapter(this.getActivity(), "times");
 		}
-        d = WtaDatastore.getInstance(getActivity());
         
         getListView().setAdapter(ad);	// set the list adapter before calling super!
 		
@@ -157,7 +156,7 @@ public class NextBusFragment extends WtaFragment {
     private void updateStopInfoViews(final int stop_id, final String location) {
 		stop_id_label.setText((CharSequence) String.valueOf(stop_id));
 		location_label.setText((CharSequence) location);
-		favoritesTasks.isFavorite(stop_id);
+		checkFavoritesTask.isFavorite(stop_id);
 		Log.d(TAG,"updateStopInfoViews() - stop_id_label = " + stop_id +
 				  ", location_label = " + location);
     }
@@ -187,10 +186,10 @@ public class NextBusFragment extends WtaFragment {
     		return true;
     	} else if (item.getItemId() == R.id.menu_favorite_toggle) {
     		if (favorite) {
-				d.rmFavorite(stop_id);
+    			updateFavoritesTask.rmFavorite(stop_id);
 				isFavorite(false);
     		} else {
-				d.addFavorite(stop_id, location);
+    			updateFavoritesTask.addFavorite(stop_id, location);
 				isFavorite(true);
     		}
     	}

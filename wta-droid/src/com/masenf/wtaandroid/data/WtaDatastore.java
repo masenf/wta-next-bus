@@ -45,91 +45,48 @@ public class WtaDatastore {
 	public static final String KEY_UPDATEDTIME = "updated_time";
 	public static final String KEY_TIMEID = "_id";
 	
-	private DatabaseHelper dbHelper;
+	private static DatabaseHelper dbHelper;
+	private static WtaDatastore readable;
+	private static WtaDatastore writable;
 	private SQLiteDatabase db;
-	private static WtaDatastore ins;
 	
-	private static final String DATABASE_NAME = "data";
-	private static final int DATABASE_VERSION = 10; 
-	private static final String TABLE_STOP = "stop";
-	private static final String TABLE_TAG_JOIN = "tag_join";
-	private static final String TABLE_TAG = "tag";
-	private static final String TABLE_TIMES = "times";
-	
-	// this class helps us open/create a new database
-	private static class DatabaseHelper extends SQLiteOpenHelper {
-		// this will generate the table structure
-		private static final String[] SQL_DB_CREATE = new String[] {
-			"CREATE TABLE times ( " +
-				"_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-				"stop_id INTEGER NOT NULL, " +
-				"time TEXT NOT NULL, " +
-				"routenum TEXT NOT NULL, "+
-				"name TEXT NOT NULL, " +
-				"destination TEXT, " +
-				"dow TEXT NOT NULL, " +
-				"updated_time TEXT NOT NULL, " +
-				"updated INTEGER NOT NULL ); ",
-			
-			"CREATE TABLE stop ( " +
-				"_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-				"stop_id INTEGER UNIQUE NOT NULL, " +
-				"name TEXT NOT NULL, " +
-				"alias TEXT DEFAULT NULL);",
-			
-			"CREATE TABLE tag ( " +
-				"_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-				"name TEXT UNIQUE NOT NULL, " +
-				"color TEXT DEFAULT NULL);",
-				
-			"CREATE TABLE tag_join ( " +
-				"_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-				"tag_id INTEGER NOT NULL, " +
-				"fk INTEGER NOT NULL, " +
-				"type INTEGER NOT NULL," +
-				"sorder INTEGER NOT NULL )" };
-		
-		DatabaseHelper(Context ctx) {
-			super(ctx, DATABASE_NAME, null, DATABASE_VERSION);
-			Resources res = ctx.getResources();
-		}
-		@Override
-		public void onCreate(SQLiteDatabase db) {
-			Log.v(TAG, "Creating new database");
-			for (String sql : SQL_DB_CREATE) {
-				db.execSQL(sql);
-			}
-			ins.initData(db);
-		}
-		@Override
-		public void onUpgrade(SQLiteDatabase db, int oldVer, int newVer) {
-			Log.w(TAG, "Upgrading database from ver " + oldVer +
-					" --> " + newVer + ". Data will be destroyed.");
-			db.execSQL("DROP TABLE IF EXISTS stop");
-			db.execSQL("DROP TABLE IF EXISTS tag_join");
-			db.execSQL("DROP TABLE IF EXISTS tag");
-			db.execSQL("DROP TABLE IF EXISTS times");
-			onCreate(db);
-		}
-	}
+	static final String DATABASE_NAME = "data";
+	static final int DATABASE_VERSION = 10; 
+	static final String TABLE_STOP = "stop";
+	static final String TABLE_TAG_JOIN = "tag_join";
+	static final String TABLE_TAG = "tag";
+	static final String TABLE_TIMES = "times";
 
 	// a Static factory function (this is just for fun)
-	public static WtaDatastore getInstance(Context ctx) throws SQLException {
-		if (ins == null) {
-			ins = new WtaDatastore();
-			ins.dbHelper = new DatabaseHelper(ctx);
-			ins.db = ins.dbHelper.getWritableDatabase();
+	public static void initialize(Context ctx) throws SQLException {
+		if (dbHelper == null) {
+			dbHelper = new DatabaseHelper(ctx);
 		}
-		return ins;
+	}
+	public static WtaDatastore getReadableInstance() {
+		if (readable == null) {
+			readable = new WtaDatastore();
+			readable.db = dbHelper.getReadableDatabase();
+		}
+		return readable;
+	}
+	public static WtaDatastore getWritableInstance() {
+		if (writable == null) {
+			writable = new WtaDatastore();
+			writable.db = dbHelper.getWritableDatabase();
+		}
+		return writable;
+	}
+	public static void onCreate(SQLiteDatabase db) {
+		// this will only run on db creation
+		WtaDatastore ins = new WtaDatastore();
+		ins.db = db;
+		ins.initData();
 	}
 	public void close() {
-		ins.dbHelper.close();
-		ins = null;
+		db.close();
 	}
-	void initData(SQLiteDatabase db) {
-		// this will only run on db creation
-		ins.db = db;
-		
+	void initData() {
 		// create default tags
 		long root_id = createOrUpdateTag(null, TAG_ROOT, null, true);
 		long favorites_id = createOrUpdateTag(null, TAG_FAVORITES, "red", true);
@@ -140,6 +97,8 @@ public class WtaDatastore {
 		setTag(recent_id, (int) root_id, TagEntryType.TAG_NAME, 0);
 	}
 	// database access/manipulation functions
+	
+	// reading functions
 	public Cursor getAllTags() {
 		return db.query(true, TABLE_TAG, new String[] {KEY_NAME}, null, null, null, null, null, null);
 	}
@@ -157,6 +116,9 @@ public class WtaDatastore {
 		return tag_id;
 	}
 	private String tagJoinQuery(String[] select, String join_table, String foreign_key, String where, TagEntryType type) {
+		return tagJoinQuery(select, join_table, foreign_key, where, type, "ASC");
+	}
+	private String tagJoinQuery(String[] select, String join_table, String foreign_key, String where, TagEntryType type, String order_dir) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT ");
 		for (String s : select)
@@ -167,7 +129,7 @@ public class WtaDatastore {
 		sb.append(String.format("ON tj.%s = j.%s and tj.%s = %s ", (Object[]) new String[]
 				{ KEY_FK, foreign_key, KEY_TYPE, String.valueOf(type.ordinal()) } ));
 		sb.append("WHERE " + where + " ");
-		sb.append("ORDER BY tj." + KEY_ORDER);
+		sb.append("ORDER BY tj." + KEY_ORDER + " " + order_dir);
 		return sb.toString();
 	}
 	public Cursor getSubTags(String tag) {
@@ -207,12 +169,15 @@ public class WtaDatastore {
 	}
 	public Cursor getLocations(String tag) {
 		// return _id, stop_id, name, alias
+		String order_dir = "ASC";
+		if (tag.equals(TAG_RECENT))
+			order_dir = "DESC";
 		Integer tag_id = getTagId(tag);
 		if (tag_id == null)
 			return null;
 		String[] args = new String [] {tag_id.toString()};
 		String[] select = new String[] { "j." + KEY_ID + " as _id", KEY_STOPID, KEY_NAME, KEY_ALIAS };
-		String query = tagJoinQuery(select, TABLE_STOP, KEY_STOPID, KEY_TAGID + " = ?",TagEntryType.STOP);
+		String query = tagJoinQuery(select, TABLE_STOP, KEY_STOPID, KEY_TAGID + " = ?",TagEntryType.STOP, order_dir);
 		return db.rawQuery(query, args);
 	}
 	public Cursor getStop(int stop_id) {
@@ -220,6 +185,8 @@ public class WtaDatastore {
 		return db.query(TABLE_STOP, new String[] {KEY_ID, KEY_STOPID, KEY_NAME, KEY_ALIAS}, KEY_STOPID + " = ?", 
 				new String[] {String.valueOf(stop_id)}, null, null, null);
 	}
+	
+	// write functions
 	public long addLocation(String tag, int stop_id, String name, String alias) {
 		long _id;
 		ContentValues v = new ContentValues();
@@ -237,6 +204,7 @@ public class WtaDatastore {
 			_id = db.insert(TABLE_STOP, null, v);
 		}
 		if (tag != null) {
+			// actually set the tag here
 			setTag(stop_id, tag, TagEntryType.STOP, 10);
 		}
 		return _id;
@@ -283,10 +251,6 @@ public class WtaDatastore {
 		}
 		return db.insert(TABLE_TAG_JOIN, null, v);	
 	}
-
-	public long addTagToLocation(long _id, String tag) {
-		return setTag(_id, tag, TagEntryType.STOP, 10);
-	}
 	public long rmTagFromLocation(int stop_id, String tag) {
 		Integer tag_id = getTagId(tag);
 		if (tag_id != null) {
@@ -294,18 +258,6 @@ public class WtaDatastore {
 					new String[] {String.valueOf(stop_id), tag_id.toString()});
 		}
 		return 0;
-	}
-	public long rmFavorite(int stop_id) {
-		return rmTagFromLocation(stop_id, TAG_FAVORITES);
-	}
-	public long addFavorite(int stop_id, String name) {
-		return addLocation(TAG_FAVORITES, stop_id, name, null);
-	}
-	public boolean isFavorite(int stop_id) {
-		return hasTag(stop_id, TAG_FAVORITES);
-	}
-	public long addRecent(int stop_id, String name) {
-		return addLocation(TAG_RECENT, stop_id, name, null);
 	}
 	public void clrRecent() {
 		Integer tag_id = getTagId(TAG_RECENT);

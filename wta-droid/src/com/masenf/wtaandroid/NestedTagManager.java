@@ -51,8 +51,7 @@ public class NestedTagManager extends EntryClickHandler implements OnItemClickLi
 
 		Context ctx = (Context) act;
 		TagEntry.createFolder(ctx);		// generate the folder icon
-		dtf = new DataReadTaskFactory(WtaDatastore.getInstance(ctx), 
-				new DataReadCallback() {
+		dtf = new DataReadTaskFactory(new DataReadCallback() {
 					@Override
 					public void updateData(EntryList result) {
 						if (ad != null) {
@@ -120,7 +119,7 @@ public class NestedTagManager extends EntryClickHandler implements OnItemClickLi
 	private void reloadData() {
 		Log.v(TAG,"reloadData() - started reloading data from " + current_item.getLtag());
 		lv.setAdapter(null);
-		dtf.getTagsAndLocations(current_item.getLtag());	// spawn the fetch task
+		dtf.getContents(current_item.getLtag());	// spawn the fetch task
 	}
 	public void push(final String next_ltag) {
 		current_item.setListPos(lv.getFirstVisiblePosition());

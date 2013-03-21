@@ -31,7 +31,6 @@ public class SearchFragment extends WtaFragment implements OnItemClickListener {
 	
 	private ResultsListAdapter ad = null;
 	private EditText search_box = null;
-	private WtaDatastore d = null;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -63,7 +62,6 @@ public class SearchFragment extends WtaFragment implements OnItemClickListener {
     		Log.d(TAG,"onResume() - ResultsListAdapter ad is null, creating new instance");
     		ad = new ResultsListAdapter(this.getActivity(), "stops");
     	}
-        d = WtaDatastore.getInstance(this.getActivity());
         getListView().setAdapter(ad);
         getListView().setOnItemClickListener(this);
     	super.onResume();
@@ -117,7 +115,6 @@ public class SearchFragment extends WtaFragment implements OnItemClickListener {
 		TextView txt_name = (TextView) target.findViewById(R.id.item_location);
 		int stop_id = Integer.parseInt(txt_stop_id.getText().toString());
 		String name = txt_name.getText().toString();
-		d.addRecent(stop_id, name);
 		a.lookupTimesForStop(stop_id, name);
 	}
 }

@@ -1,13 +1,14 @@
 package com.masenf.wtaandroid.data;
 
-import com.masenf.core.EntryClickHandler;
-import com.masenf.core.data.BaseEntry;
-import com.masenf.wtaandroid.R;
-import com.masenf.wtaandroid.WtaActivity;
 import android.database.Cursor;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+
+import com.masenf.core.EntryClickHandler;
+import com.masenf.core.data.BaseEntry;
+import com.masenf.wtaandroid.R;
+import com.masenf.wtaandroid.WtaActivity;
 
 public class LocationEntry extends BaseEntry {
 		/**
@@ -62,7 +63,6 @@ public class LocationEntry extends BaseEntry {
 		public void handleClick(EntryClickHandler tg) {
 			WtaActivity a = (WtaActivity) tg.getActivity();
 			if (a != null) {
-				WtaDatastore.getInstance(a).addRecent(stop_id, name);
 				a.lookupTimesForStop(stop_id, name);
 			}
 		}

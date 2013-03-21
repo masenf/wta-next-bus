@@ -14,6 +14,8 @@ import android.view.MenuItem;
 import com.masenf.core.GenericTabListener;
 import com.masenf.core.TabNavActivity;
 import com.masenf.wtaandroid.fragment.BrowseFragment;
+import com.masenf.wtaandroid.async.DataWriteTaskFactory;
+import com.masenf.wtaandroid.data.WtaDatastore;
 import com.masenf.wtaandroid.fragment.FavoritesFragment;
 import com.masenf.wtaandroid.fragment.NextBusFragment;
 import com.masenf.wtaandroid.fragment.SearchFragment;
@@ -22,6 +24,8 @@ import com.masenf.wtaandroid.fragment.dialog.AboutDialogFragment;
 public class WtaActivity extends TabNavActivity {
 
 	private static final String TAG = "WtaActivity";
+	
+	private static WtaDatastore writableInstance;
 	
 	private Tab favorites;
 	private Tab search;
@@ -32,6 +36,9 @@ public class WtaActivity extends TabNavActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // initialize the database!
+        WtaDatastore.initialize(this);
         
     	Log.d(TAG,"onCreate() - creating actionbar tabs");
         ActionBar ab = getActionBar();
@@ -84,6 +91,9 @@ public class WtaActivity extends TabNavActivity {
     public void lookupTimesForStop(final int stop_id, final String location)
     {
     	final Handler h = new Handler();
+
+    	DataWriteTaskFactory dwtf = new DataWriteTaskFactory(null);
+    	dwtf.addRecent(stop_id, location);
     	prev_tab = getActionBar().getSelectedNavigationIndex();
     	getActionBar().selectTab(nextbus);
     	
