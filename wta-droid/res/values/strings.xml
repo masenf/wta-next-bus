@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="hello">Hello World, main!</string>
+    <string name="api_endpoint">http://nextbus.soon.it/</string>
     <string name="app_name">WTA Next Bus</string>
     <string name="search">New Search</string>
     <string name="next">More results</string>
     <string name="search_hint">ex: Indian at E Chestnut St</string>
     <string name="search_instruct">Search for an address</string>
     <string name="nextbus_stops">Next buses at stop # </string>
+    
 
 </resources>

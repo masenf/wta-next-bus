@@ -2,6 +2,7 @@ package com.masenf.wtaandroid.fragment;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import org.json.JSONObject;
 
 import android.content.Context;
@@ -15,7 +16,7 @@ import com.masenf.core.TabNavActivity;
 import com.masenf.core.async.JSONRequestTask;
 import com.masenf.core.async.callbacks.RequestCallback;
 import com.masenf.wtaandroid.NestedTagManager;
-import com.masenf.wtaandroid.WtaActivity;
+import com.masenf.wtaandroid.R;
 import com.masenf.wtaandroid.adapters.TagListAdapter;
 import com.masenf.wtaandroid.async.LibraryUpdateTask;
 import com.masenf.wtaandroid.data.WtaDatastore;
@@ -101,7 +102,7 @@ public class BrowseFragment extends WtaFragment {
     	// this is a task within a task
     	
 		Log.d(TAG,"doFetchData() - fetching library data");
-    	String url = new String(WtaActivity.wAPI);
+    	String url = getResources().getString(R.string.api_endpoint);
 		url = new String(url + "library");
 		Log.d(TAG,"doFetchData() - Created URL = " + url);
     	try {

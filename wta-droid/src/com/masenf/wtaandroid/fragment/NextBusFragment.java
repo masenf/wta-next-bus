@@ -21,7 +21,6 @@ import com.masenf.core.async.callbacks.DataReadCallback;
 import com.masenf.core.async.callbacks.RequestCallback;
 import com.masenf.core.data.EntryList;
 import com.masenf.wtaandroid.R;
-import com.masenf.wtaandroid.WtaActivity;
 import com.masenf.wtaandroid.adapters.TimesListAdapter;
 import com.masenf.wtaandroid.async.DataReadTaskFactory;
 import com.masenf.wtaandroid.data.WtaDatastore;
@@ -125,7 +124,7 @@ public class NextBusFragment extends WtaFragment {
     {
 		Log.d(TAG,"doFetchData() - fetching data for " + stop_id);
     	ad.setData(null);	// blank out the list while loading
-    	String url = new String(WtaActivity.wAPI);
+    	String url = getResources().getString(R.string.api_endpoint);
 		try {
 			url = new String(url + "times?stopid=" + URLEncoder.encode(String.valueOf(stop_id),"UTF-8"));
 		} catch (UnsupportedEncodingException e1) {

@@ -17,7 +17,6 @@ import com.masenf.wtaandroid.fragment.SearchFragment;
 public class WtaActivity extends TabNavActivity {
 
 	private static final String TAG = "WtaActivity";
-	public static final String wAPI = "http://nextbus.soon.it/";
 	
 	private Tab favorites;
 	private Tab search;
@@ -28,6 +27,7 @@ public class WtaActivity extends TabNavActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
     	Log.d(TAG,"onCreate() - creating actionbar tabs");
         ActionBar ab = getActionBar();
         ab.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);

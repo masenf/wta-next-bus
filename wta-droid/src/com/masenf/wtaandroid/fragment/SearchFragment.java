@@ -80,7 +80,7 @@ public class SearchFragment extends WtaFragment implements OnItemClickListener {
     public void doFetchData(String query)
     {
     	Log.d(TAG,"doFetchData() - fetching 'qlocation' data for " + query);
-    	String url = new String(WtaActivity.wAPI);
+    	String url = getResources().getString(R.string.api_endpoint);
 		try {
 			url = new String(url + "qlocation?q=" + URLEncoder.encode(query,"UTF-8"));
 		} catch (UnsupportedEncodingException e1) {
