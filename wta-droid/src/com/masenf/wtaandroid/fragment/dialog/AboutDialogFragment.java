@@ -1,4 +1,4 @@
-package com.masenf.wtaandroid.fragment;
+package com.masenf.wtaandroid.fragment.dialog;
 
 import com.masenf.wtaandroid.R;
 
@@ -26,7 +26,7 @@ public class AboutDialogFragment extends DialogFragment {
             	startActivity(i);
             }
         });
-        builder.setNeutralButton(R.string.about_dismiss, new DialogInterface.OnClickListener() {
+        builder.setNeutralButton(R.string.dismiss, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 			}

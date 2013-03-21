@@ -13,11 +13,11 @@ import android.view.MenuItem;
 
 import com.masenf.core.GenericTabListener;
 import com.masenf.core.TabNavActivity;
-import com.masenf.wtaandroid.fragment.AboutDialogFragment;
 import com.masenf.wtaandroid.fragment.BrowseFragment;
 import com.masenf.wtaandroid.fragment.FavoritesFragment;
 import com.masenf.wtaandroid.fragment.NextBusFragment;
 import com.masenf.wtaandroid.fragment.SearchFragment;
+import com.masenf.wtaandroid.fragment.dialog.AboutDialogFragment;
 
 public class WtaActivity extends TabNavActivity {
 

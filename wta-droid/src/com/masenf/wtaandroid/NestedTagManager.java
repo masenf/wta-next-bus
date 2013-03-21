@@ -6,10 +6,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 import com.masenf.core.EntryClickHandler;
@@ -23,7 +28,9 @@ import com.masenf.wtaandroid.async.DataReadTaskFactory;
 import com.masenf.wtaandroid.data.TagEntry;
 import com.masenf.wtaandroid.data.WtaDatastore;
 
-public class NestedTagManager extends EntryClickHandler implements OnItemClickListener, IonBackButtonPressed {
+public class NestedTagManager extends EntryClickHandler implements OnItemClickListener, 
+																   IonBackButtonPressed, 
+																   OnItemLongClickListener {
 
 	private static final String TAG = "NestedTagManager";
 	private static final int slide_out_msec = 280;
@@ -38,9 +45,9 @@ public class NestedTagManager extends EntryClickHandler implements OnItemClickLi
 	private StackItem current_item = null;
 	
 	public NestedTagManager(Activity act, final ListView lv, final TagListAdapter ad) {
-		this.lv = lv;
-		this.ad = ad;
-		this.act = act;
+		setListView(lv);
+		setAdapter(ad);
+		setActivity(act);
 
 		Context ctx = (Context) act;
 		TagEntry.createFolder(ctx);		// generate the folder icon
@@ -65,6 +72,7 @@ public class NestedTagManager extends EntryClickHandler implements OnItemClickLi
 	}
 	public void setListView(ListView lv) {
 		this.lv = lv;
+		lv.setOnItemLongClickListener(this);
 	}
 	public void setAdapter(TagListAdapter ad) {
 		this.ad = ad;
@@ -183,5 +191,12 @@ public class NestedTagManager extends EntryClickHandler implements OnItemClickLi
 	}
 	public Activity getActivity() {
 		return act;
+	}
+	@Override
+	public boolean onItemLongClick(AdapterView<?> parent, View v, int pos,
+			long id) {
+		// pop up rename dialog
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

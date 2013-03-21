@@ -25,6 +25,9 @@
 		</string>
 	<string name="about_url">https://github.com/masenf/wta-next-bus</string>
 	<string name="about_visit">Visit Github</string>
-	<string name="about_dismiss">Dismiss</string>
+	<string name="dismiss">Dismiss</string>
+	
+	<string name="rename_title">Rename Stop</string>
+	<string name="save">Save</string>
 
 </resources>
