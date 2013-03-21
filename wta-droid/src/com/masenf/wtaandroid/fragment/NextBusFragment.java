@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.masenf.core.async.JSONRequestTask;
@@ -30,8 +31,10 @@ public class NextBusFragment extends WtaFragment {
 
 	private TextView stop_id_label;
 	private TextView location_label;
+	
 	private int stop_id;
 	private String location;
+	private String timesData;
 	
 	private Button btn_mod_fav;
 	private TimesListAdapter ad;
@@ -78,16 +81,43 @@ public class NextBusFragment extends WtaFragment {
 		
 		super.onResume();
 		
-		WtaActivity a = (WtaActivity) getActivity();
-		stop_id = a.getSelected_stop();
-		location = a.getSelected_location();
-		if (a.isReload()) {
-			doFetchData(stop_id);
+		// load the last location, if there was one
+		Bundle inState = getInstanceState();
+		if (inState.containsKey("stop_id")) {
+			stop_id = inState.getInt("stop_id");
+			location = inState.getString("location","");
+			if (inState.containsKey("timesData")) {
+				timesData = inState.getString("timesData");
+				try {
+					ad.setData(new JSONObject(timesData));
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
 		}
-		
-		updateStopInfoViews(stop_id, location);
+		updateStopInfoViews(this.stop_id, this.location);
 	}
+	@Override
+	public void onPause() {
+		Log.d(TAG,"onPause() - Saving current stop details");
+		Bundle inState = getInstanceState();
+		inState.putInt("stop_id", stop_id);
+		inState.putString("location", location);
+		if (timesData != null)
+			inState.putString("timesData", timesData);
 
+		super.onPause();
+	}
+	public void lookupTimesForStop(int stop_id, String location)
+	{
+		getInstanceState().remove("stop_id");		// prevent onResume() from loading cached data
+		this.stop_id = stop_id;
+		this.location = location;
+		
+		doFetchData(this.stop_id);
+		
+		updateStopInfoViews(this.stop_id, this.location);
+	}
     public void doFetchData(int stop_id)
     {
 		Log.d(TAG,"doFetchData() - fetching data for " + stop_id);
@@ -108,9 +138,7 @@ public class NextBusFragment extends WtaFragment {
 				public void updateData(JSONObject result) {
 					Log.d(TAG,"updateData() - Received JSONObject from thread");
 					ad.setData(result);
-					WtaActivity a = (WtaActivity) getActivity();
-					if (a != null)
-						a.setReload(false);		// don't reload the data next time
+					timesData = result.toString();
 				}
 			}).executeOnExecutor(JSONRequestTask.THREAD_POOL_EXECUTOR, u);
 		} catch (MalformedURLException e) {

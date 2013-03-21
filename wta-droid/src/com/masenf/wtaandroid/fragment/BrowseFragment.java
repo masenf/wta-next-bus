@@ -67,7 +67,13 @@ public class BrowseFragment extends WtaFragment {
 		// Restore the stack state if it exists (descended hierarchy + current data)
 		if (inState.containsKey("stack_state")) {
 			Log.d(TAG,"onResume() - Deserializing stack_state from stack_state for " + getClass().getName());
-			nTm.restoreStackState(inState.getBundle("stack_state"));
+			try {
+				nTm.restoreStackState(inState.getBundle("stack_state"));
+			} catch (ClassCastException ex) {
+				Log.v(TAG,"restoreStackState() - encountered ClassCastException trying to restore" +
+						"stack. Reload everything and forget this happened.");
+				nTm.setLevel(root_tag);
+			}
 		} else {
 			nTm.setLevel(root_tag);		// navigate to root if no state
 		}

@@ -144,7 +144,18 @@ public class NestedTagManager extends EntryClickHandler implements OnItemClickLi
 		Log.v(TAG,"saveStackState() - saved stack state");
 		return p;
 	}
-	public void restoreStackState(Bundle p) {
+
+	/**
+	 * restore the state saved by saveStackState.
+	 * @param p
+	 * @throws ClassCastException a bug I haven't yet tracked down in Android
+	 * causes the Stack to end up looking like an ArrayList after being cached and restarted.
+	 * The "ArrayList" can't be cast 
+	 * directly from Serializable to Stack. When this exception is thrown, it's
+	 * best to setLevel() and start over.
+	 */
+	@SuppressWarnings("unchecked")
+	public void restoreStackState(Bundle p) throws ClassCastException {
 		if (p != null) {
 			if (p.containsKey("stack"))
 				this.s = (Stack<StackItem>) p.getSerializable("stack");
