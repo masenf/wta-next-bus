@@ -2,7 +2,6 @@ package com.masenf.wtaandroid;
 
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
 import android.os.Handler;

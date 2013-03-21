@@ -1,11 +1,10 @@
 package com.masenf.wtaandroid.data;
 
-import com.masenf.core.EntryClickHandler;
-import com.masenf.core.data.BaseEntry;
-
 import android.database.Cursor;
 import android.util.Log;
-import android.view.View;
+
+import com.masenf.core.EntryClickHandler;
+import com.masenf.core.data.BaseEntry;
 
 public class TimeEntry extends BaseEntry {
 	/**
