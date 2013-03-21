@@ -8,6 +8,14 @@ import java.net.URLEncoder;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+
 import com.masenf.core.async.JSONRequestTask;
 import com.masenf.core.async.callbacks.DataReadCallback;
 import com.masenf.core.async.callbacks.RequestCallback;
@@ -18,25 +26,20 @@ import com.masenf.wtaandroid.adapters.TimesListAdapter;
 import com.masenf.wtaandroid.async.DataReadTaskFactory;
 import com.masenf.wtaandroid.data.WtaDatastore;
 
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.TextView;
-
 public class NextBusFragment extends WtaFragment {
 	
 	private static final String TAG = "NextBusFragment";
 
 	private TextView stop_id_label;
 	private TextView location_label;
+	private boolean refresh = false;		// set to true when a refresh is in progress
+	private boolean favorite = false;
 	
 	private int stop_id;
 	private String location;
 	private String timesData;
 	
-	private Button btn_mod_fav;
+	private MenuItem menu_favorite_toggle;
 	private TimesListAdapter ad;
 	private WtaDatastore d;
 	
@@ -58,6 +61,7 @@ public class NextBusFragment extends WtaFragment {
 											isFavorite(false);
 									}
 								});	// don't update progress for this task
+		this.setHasOptionsMenu(true);
 	}
 	@Override
     public void onViewCreated(View v, Bundle savedInstanceState) {
@@ -65,7 +69,6 @@ public class NextBusFragment extends WtaFragment {
 		// Get controls from view
         stop_id_label = (TextView) v.findViewById(R.id.stop_id_label);
         location_label = (TextView) v.findViewById(R.id.location_label);
-        btn_mod_fav = (Button) v.findViewById(R.id.btn_mod_fav);
     }
 	
 	@Override
@@ -133,14 +136,21 @@ public class NextBusFragment extends WtaFragment {
     	try {
 			URL u = new URL(url);
 			new JSONRequestTask(new RequestCallback<JSONObject>() {
-
 				@Override
 				public void updateData(JSONObject result) {
 					Log.d(TAG,"updateData() - Received JSONObject from thread");
 					ad.setData(result);
 					timesData = result.toString();
 				}
-			}).executeOnExecutor(JSONRequestTask.THREAD_POOL_EXECUTOR, u);
+			}){
+				@Override
+				protected void onPostExecute(JSONObject result)
+				{
+					super.onPostExecute(result);
+					refresh = false;	// mark that the refresh is complete
+				}
+			}.executeOnExecutor(JSONRequestTask.THREAD_POOL_EXECUTOR, u);
+			refresh = true;
 		} catch (MalformedURLException e) {
 			Log.e(TAG,"Malformed url: " + url);
 		}
@@ -153,28 +163,38 @@ public class NextBusFragment extends WtaFragment {
 				  ", location_label = " + location);
     }
     private void isFavorite(boolean fav) {
-		String fav_label = "";
-		
 		if (fav) {
-			fav_label = "Remove Favorite";
-			btn_mod_fav.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					d.rmFavorite(stop_id);
-					isFavorite(false);
-				}
-			});
+			favorite = true;
+			menu_favorite_toggle.setIcon(R.drawable.rm_favorite);
 		} else {
-			fav_label = "Add Favorite";
-			btn_mod_fav.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					d.addFavorite(stop_id, location);
-					isFavorite(true);
-				}
-			});
+			favorite = false;
+			menu_favorite_toggle.setIcon(R.drawable.add_favorite);
 		}
-		btn_mod_fav.setText(fav_label);
-		Log.v(TAG,"isFavorite? fav_label = " + fav_label);
+    }
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+    {
+    	Log.v(TAG,"onCreateOptionsMenu() adding actionBar items");
+        inflater.inflate(R.menu.nextbus_menu, menu);
+        menu_favorite_toggle = menu.findItem(R.id.menu_favorite_toggle);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+    @Override
+    public boolean onOptionsItemSelected (MenuItem item)
+    {
+    	if (item.getItemId() == R.id.menu_refresh) {
+    		if (!refresh)
+    			doFetchData(stop_id);
+    		return true;
+    	} else if (item.getItemId() == R.id.menu_favorite_toggle) {
+    		if (favorite) {
+				d.rmFavorite(stop_id);
+				isFavorite(false);
+    		} else {
+				d.addFavorite(stop_id, location);
+				isFavorite(true);
+    		}
+    	}
+    	return false;
     }
 }
