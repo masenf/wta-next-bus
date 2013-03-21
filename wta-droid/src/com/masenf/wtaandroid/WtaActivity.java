@@ -16,7 +16,7 @@ import android.util.Log;
 public class WtaActivity extends TabNavActivity {
 
 	private static final String TAG = "WtaActivity";
-	public static final String wAPI = "http://mashed-potatoes.with-linux.com:8080/";
+	public static final String wAPI = "http://nextbus.soon.it/";
 	
 	private int selected_stop;
 	private String selected_location;
