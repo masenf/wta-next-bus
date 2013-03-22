@@ -26,6 +26,10 @@ public class LibraryUpdateTask extends ProgressReportingTask<JSONObject, Integer
 	@Override
 	protected Integer doInBackground(JSONObject... params) {
 		int count = params.length;
+		if (count == 0)
+			return 0;
+		
+		d.getDB().beginTransactionNonExclusive();
 		for (int ob=0;ob<count;ob++){
 			try {
 				JSONObject result = params[ob];
@@ -74,8 +78,11 @@ public class LibraryUpdateTask extends ProgressReportingTask<JSONObject, Integer
 					d.setTag(d.getTagId(landmark_name), WtaDatastore.TAG_ROOT, TagEntryType.TAG_NAME, 20);
 					raw_progress += 1;
 				}
+				d.getDB().setTransactionSuccessful();
 			} catch (JSONException e) {
 				appendError("Error unpacking json file, try again under options");
+			} finally {
+				d.getDB().endTransaction();
 			}
 		}
 		return Integer.valueOf(0);

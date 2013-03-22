@@ -6,13 +6,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
-import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
@@ -26,7 +22,6 @@ import com.masenf.core.data.EntryList;
 import com.masenf.wtaandroid.adapters.TagListAdapter;
 import com.masenf.wtaandroid.async.DataReadTaskFactory;
 import com.masenf.wtaandroid.data.TagEntry;
-import com.masenf.wtaandroid.data.WtaDatastore;
 
 public class NestedTagManager extends EntryClickHandler implements OnItemClickListener, 
 																   IonBackButtonPressed, 

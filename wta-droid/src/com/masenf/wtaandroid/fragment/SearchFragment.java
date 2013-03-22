@@ -7,13 +7,6 @@ import java.net.URLEncoder;
 
 import org.json.JSONObject;
 
-import com.masenf.core.async.JSONRequestTask;
-import com.masenf.core.async.callbacks.RequestCallback;
-import com.masenf.wtaandroid.R;
-import com.masenf.wtaandroid.WtaActivity;
-import com.masenf.wtaandroid.adapters.ResultsListAdapter;
-import com.masenf.wtaandroid.data.WtaDatastore;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,6 +18,12 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.masenf.core.async.JSONRequestTask;
+import com.masenf.core.async.callbacks.RequestCallback;
+import com.masenf.wtaandroid.R;
+import com.masenf.wtaandroid.WtaActivity;
+import com.masenf.wtaandroid.adapters.ResultsListAdapter;
 
 public class SearchFragment extends WtaFragment implements OnItemClickListener {
 	private static final String TAG = "SearchFragment";

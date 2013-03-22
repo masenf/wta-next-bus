@@ -53,7 +53,7 @@ public class WtaDatastore {
 	private SQLiteDatabase db;
 	
 	static final String DATABASE_NAME = "data";
-	static final int DATABASE_VERSION = 10; 
+	static final int DATABASE_VERSION = 11; 
 	static final String TABLE_STOP = "stop";
 	static final String TABLE_TAG_JOIN = "tag_join";
 	static final String TABLE_TAG = "tag";
@@ -90,15 +90,31 @@ public class WtaDatastore {
 	}
 	void initData() {
 		// create default tags
-		createOrUpdateTag(ROOT_ID, TAG_ROOT, null, true);
-		createOrUpdateTag(FAVORITES_ID, TAG_FAVORITES, "red", true);
-		createOrUpdateTag(RECENT_ID, TAG_RECENT, "grey", true);
+		ContentValues cvs = new ContentValues();
+		cvs.put(KEY_ID, ROOT_ID);
+		cvs.put(KEY_NAME, TAG_ROOT);
+		db.insert(TABLE_TAG, null, cvs);
+		cvs.put(KEY_ID, FAVORITES_ID);
+		cvs.put(KEY_NAME, TAG_FAVORITES);
+		db.insert(TABLE_TAG, null, cvs);
+		cvs.put(KEY_ID, RECENT_ID);
+		cvs.put(KEY_NAME, TAG_RECENT);
+		db.insert(TABLE_TAG, null, cvs);
 		
 		// create basic hierarchy
 		setTag(FAVORITES_ID, ROOT_ID, TagEntryType.TAG_NAME, 999);
 		setTag(RECENT_ID, ROOT_ID, TagEntryType.TAG_NAME, 0);
 	}
 	// database access/manipulation functions
+	
+	/**
+	 * make sure you know what you're doing...
+	 * @return the underlying database connection
+	 */
+	public SQLiteDatabase getDB()
+	{
+		return db;
+	}
 	
 	// reading functions
 	public Cursor getAllTags() {
@@ -115,6 +131,7 @@ public class WtaDatastore {
 		{
 			tag_id = Integer.valueOf(c.getInt(c.getColumnIndex(KEY_ID)));
 		}
+		c.close();
 		return tag_id;
 	}
 	private String tagJoinQuery(String[] select, String join_table, String foreign_key, String where, TagEntryType type) {
@@ -164,7 +181,9 @@ public class WtaDatastore {
 		Cursor c = db.query(TABLE_TAG_JOIN, new String[] { KEY_ID }, 
 				KEY_TAGID + " = ? AND " + KEY_FK + " = ?" , new String[] {tag_id.toString(), String.valueOf(fk)},
 				null,null,null);
-		if (c.getCount() > 0) {
+		int count = c.getCount();
+		c.close();
+		if (count > 0) {
 			return true;
 		}
 		return false;
@@ -205,6 +224,7 @@ public class WtaDatastore {
 		} else {
 			_id = db.insert(TABLE_STOP, null, v);
 		}
+		c.close();
 		if (tag != null) {
 			// actually set the tag here
 			setTag(stop_id, tag, TagEntryType.STOP, 10);
@@ -217,8 +237,7 @@ public class WtaDatastore {
 		// return the tag id of tag
 		ContentValues v = new ContentValues();
 		
-		// no id passed in, lookup the tag
-		if (tag_id == null)
+		if (tag_id == null)			// no id passed in, lookup the tag
 			tag_id = getTagId(tag);
 		
 		if (tag_id == null) {		// the tag doesn't exist
