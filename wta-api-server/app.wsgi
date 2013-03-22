@@ -5,6 +5,9 @@ import os
 ENVIRONPATH = "/srv/virtualenvs/wta-api-server/lib/python3.3/site-packages"
 DEPLOYPATH = os.path.dirname(os.path.realpath(__file__))
 
+# makes referencing static files easier (for now)
+os.chdir(DEPLOYPATH)
+
 prev_path = list(sys.path)
 site.addsitedir(ENVIRONPATH)
 sys.path.append(DEPLOYPATH)
