@@ -1,5 +1,6 @@
 from bottle import route, run, request, static_file, default_app
 from search_cache import SearchCache
+import json
 import wta
 
 PROTOCOL_NAME = "wta.py"
@@ -71,6 +72,18 @@ def times():
 @route('/library')
 def library():
     return static_file('landmarks.json',root='.');
+@route('/latest-client')
+def latest_client():
+    versions = None
+    with open("upgrade.json","r") as f:
+        versions = json.load(f)
+    max_version = versions[0]
+    for v in versions:
+        if v['versionCode'] > max_version['versionCode']:
+            max_version = v
+    return max_version
+
+    
 def error(type="GENERAL", message="An error has occurred"):
     return { 'error' : type,
              'message' : message }

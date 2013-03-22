@@ -21,18 +21,19 @@ class SearchCache(object):
         # index the data
         self.stops = {}
         self.terms = {}
+        count = 0
         print("Building the SearchCache")
         for landmark, locations in raw.items():
             for loc, stops in locations.items():
-                print("Examining {}".format(loc))
                 for t in self.filter_discard(loc.lower().split(" ")):
                     for stop in stops:
                         self.add_term(t,stop)
                 for stop in stops:
-                    print(stop)
+                    count += 1
                     self.stops[stop[0]] = tuple(stop)
                     for t in self.filter_discard(stop[1].lower().split(" ")):
                         self.add_term(t, stop)
+        print("Cached {} entries".format(count))
     def add_term(self, term, stop):
         if term not in self.terms:
             self.terms[term] = set()
