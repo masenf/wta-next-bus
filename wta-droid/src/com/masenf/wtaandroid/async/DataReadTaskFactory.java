@@ -1,7 +1,5 @@
 package com.masenf.wtaandroid.async;
 
-import java.util.ArrayList;
-
 import android.util.Log;
 
 import com.masenf.core.async.DataReadTask;

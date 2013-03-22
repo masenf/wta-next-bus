@@ -1,6 +1,9 @@
 package com.masenf.wtaandroid.data;
 
+import java.util.ArrayList;
+
 import com.masenf.core.EntryClickHandler;
+import com.masenf.core.async.callbacks.DataWriteCallback;
 import com.masenf.core.data.BaseEntry;
 import com.masenf.wtaandroid.NestedTagManager;
 import com.masenf.wtaandroid.R;
@@ -14,6 +17,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class TagEntry extends BaseEntry {
 		/**
@@ -79,14 +83,33 @@ public class TagEntry extends BaseEntry {
 				}
 				@Override
 				public void doSaveData() {
-
-					if (content == null || content.isEmpty())
-						return;						// delete not implemented
-					
-					name = content;					// update display
-
 					// commit final result to database
-					DataWriteTaskFactory dwtf = new DataWriteTaskFactory(null);
+					DataWriteTaskFactory dwtf = new DataWriteTaskFactory(new DataWriteCallback() {
+						@Override
+						public void updateData(ArrayList<Long> result) {
+							if (result.size() < 1 || result.get(0) < 0) {	// error condition
+								String err_message = "Error saving tag name";
+								if (result.size() > 0) {
+									switch (result.get(0).intValue()) {
+									case WtaDatastore.ERR_DUPLICATE_NAME:
+										err_message = "Name already exists, choose a different name";
+										break;
+									case WtaDatastore.ERR_NO_NAME:
+										err_message = "A name is required to rename a tag";
+										break;
+									case WtaDatastore.ERR_SYSTEM_TAG:
+										err_message = "Sorry, cannot rename system tags (in this version)";
+										break;
+									}
+								}
+								Toast.makeText(getActivity(), err_message, Toast.LENGTH_LONG).show();
+							} else {
+								if (content == null || content.isEmpty())
+									return;						// delete not implemented
+								name = content;					// update display
+							}
+						}
+					});
 					dwtf.renameTag(tag_id, content);
 				}
 			};

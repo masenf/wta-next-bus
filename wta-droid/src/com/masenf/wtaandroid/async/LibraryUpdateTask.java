@@ -61,11 +61,11 @@ public class LibraryUpdateTask extends ProgressReportingTask<JSONObject, Integer
 							JSONArray stop = stops.getJSONArray(k);
 							int stop_id = stop.getInt(0);
 							String name = stop.getString(1);
-							String alias = null;
-							if (stop.length() > 2)
-								alias = stop.getString(2);
+							
 							// add the stops to the location
-							d.addLocation(location_name, stop_id, name, alias);
+							if (stop.length() > 2)
+								d.addLocation(location_name, stop_id, name, stop.getString(2));
+							d.addLocation(location_name, stop_id, name);
 							raw_progress += 1;
 							postProgress(raw_progress);
 						}

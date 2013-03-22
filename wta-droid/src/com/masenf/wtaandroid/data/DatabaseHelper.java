@@ -1,6 +1,8 @@
 package com.masenf.wtaandroid.data;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -37,9 +39,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			"fk INTEGER NOT NULL, " +
 			"type INTEGER NOT NULL," +
 			"sorder INTEGER NOT NULL )" };
-	
+	private Context ctx;
 	DatabaseHelper(Context ctx) {
 		super(ctx, WtaDatastore.DATABASE_NAME, null, WtaDatastore.DATABASE_VERSION);
+		this.ctx = ctx;
 	}
 	@Override
 	public void onCreate(SQLiteDatabase db) {
@@ -51,6 +54,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	}
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVer, int newVer) {
+		// TODO: perform more graceful upgrades
 		Log.w(TAG, "Upgrading database from ver " + oldVer +
 				" --> " + newVer + ". Data will be destroyed.");
 		db.execSQL("DROP TABLE IF EXISTS stop");
@@ -58,5 +62,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS tag");
 		db.execSQL("DROP TABLE IF EXISTS times");
 		onCreate(db);
+		
+		// update the pref flag to fetch a new library
+		SharedPreferences spref = ctx.getSharedPreferences("global", Context.MODE_PRIVATE);
+		Editor e = spref.edit();
+		e.putBoolean("fetch_library", true);
+		e.commit();
 	}
 }

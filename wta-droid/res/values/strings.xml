@@ -29,5 +29,7 @@
 	
 	<string name="rename_title">Rename Stop</string>
 	<string name="save">Save</string>
+	
+	<string name="reload_library">Rebuild Library From Server...</string>
 
 </resources>

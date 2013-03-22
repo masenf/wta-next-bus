@@ -47,19 +47,22 @@ public class WtaDatastore {
 	public static final String KEY_UPDATEDTIME = "updated_time";
 	public static final String KEY_TIMEID = "_id";
 	
+	public static final int ERR_SYSTEM_TAG = -1;
+	public static final int ERR_DUPLICATE_NAME = -2; 
+	public static final int ERR_NO_NAME = -3;
+	
 	private static DatabaseHelper dbHelper;
 	private static WtaDatastore readable;
 	private static WtaDatastore writable;
 	private SQLiteDatabase db;
 	
 	static final String DATABASE_NAME = "data";
-	static final int DATABASE_VERSION = 11; 
+	static final int DATABASE_VERSION = 13; 
 	static final String TABLE_STOP = "stop";
 	static final String TABLE_TAG_JOIN = "tag_join";
 	static final String TABLE_TAG = "tag";
 	static final String TABLE_TIMES = "times";
 
-	// a Static factory function (this is just for fun)
 	public static void initialize(Context ctx) throws SQLException {
 		if (dbHelper == null) {
 			dbHelper = new DatabaseHelper(ctx);
@@ -208,12 +211,11 @@ public class WtaDatastore {
 	}
 	
 	// write functions
-	public long addLocation(String tag, int stop_id, String name, String alias) {
+	public long addLocation(String tag, int stop_id, String name) {
 		long _id;
 		ContentValues v = new ContentValues();
 		v.put(KEY_STOPID, stop_id);
 		v.put(KEY_NAME, name);
-		v.put(KEY_ALIAS, alias);
 		
 		Cursor c = getStop(stop_id);
 		
@@ -230,6 +232,11 @@ public class WtaDatastore {
 			setTag(stop_id, tag, TagEntryType.STOP, 10);
 		}
 		return _id;
+	}
+	public long addLocation(String tag, int stop_id, String name, String alias) {
+		long ret = addLocation(tag, stop_id, name);
+		setAlias(stop_id, alias);
+		return ret;
 	}
 	public long createOrUpdateTag(Integer tag_id, String tag, String color, boolean replace) 
 	{
@@ -292,14 +299,16 @@ public class WtaDatastore {
 		return db.update(TABLE_STOP, cvs, KEY_STOPID + " = ?", new String[] {String.valueOf(stop_id)});
 	}
 	public long renameTag(int tag_id, String newname) {
-		if (tag_id == ROOT_ID || tag_id == FAVORITES_ID || tag_id == RECENT_ID || newname == null)
-			return 0;
+		if (tag_id == ROOT_ID || tag_id == FAVORITES_ID || tag_id == RECENT_ID)
+			return ERR_SYSTEM_TAG;
+		else if (newname == null || newname.isEmpty())
+			return ERR_NO_NAME;
 		try {
 			ContentValues cvs = new ContentValues();
 			cvs.put(KEY_NAME, newname);
 			return db.update(TABLE_TAG, cvs, KEY_ID + " = ?", new String[] {String.valueOf(tag_id)});
 		} catch (SQLiteConstraintException ex) {
-			return 0;		// duplicate name
+			return ERR_DUPLICATE_NAME;		// duplicate name
 		}
 	}
 }

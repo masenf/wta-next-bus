@@ -2,8 +2,13 @@ package com.masenf.wtaandroid;
 
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
+import android.app.AlertDialog;
 import android.app.FragmentManager;
-import android.content.Intent;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -13,9 +18,9 @@ import android.view.MenuItem;
 
 import com.masenf.core.GenericTabListener;
 import com.masenf.core.TabNavActivity;
-import com.masenf.wtaandroid.fragment.BrowseFragment;
 import com.masenf.wtaandroid.async.DataWriteTaskFactory;
 import com.masenf.wtaandroid.data.WtaDatastore;
+import com.masenf.wtaandroid.fragment.BrowseFragment;
 import com.masenf.wtaandroid.fragment.FavoritesFragment;
 import com.masenf.wtaandroid.fragment.NextBusFragment;
 import com.masenf.wtaandroid.fragment.SearchFragment;
@@ -81,12 +86,37 @@ public class WtaActivity extends TabNavActivity {
     @Override
     public boolean onOptionsItemSelected (MenuItem item)
     {
-    	if (item.getItemId() == R.id.menu_show_about) {
+    	switch (item.getItemId()) {
+    	case R.id.menu_show_about:
     		AboutDialogFragment adf = new AboutDialogFragment();
     		adf.show(getFragmentManager(), "aboutBox");
-    		return true;
+    		break;
+    	case R.id.menu_reload_library:
+    		AlertDialog.Builder b = new AlertDialog.Builder(this);
+    		b.setTitle("Rebuild Library from Server");
+    		b.setMessage("This operation will update the Browse library with the latest version from the server. " +
+    				"Any aliases will be retained, renamed library tags will be duplicated. To reset these customizations, " +
+    				"cancel this dialog, open Settings > Application manager and \"Clear Data\" for the application. " +
+    				"The library will be automatically rebuilt the next time the application starts");
+    		b.setPositiveButton("Proceed", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// update the pref flag
+					SharedPreferences spref = getSharedPreferences("global", Context.MODE_PRIVATE);
+					Editor ed = spref.edit();
+					ed.putBoolean("fetch_library", true);
+					ed.commit();
+					getActionBar().selectTab(favorites);
+					getActionBar().selectTab(browse);
+				}
+    		});
+    		b.setNegativeButton(R.string.dismiss, null);
+    		b.create().show();
+    		break;
+    	default:
+    		return false;
     	}
-    	return false;
+    	return true;
     }
     public void lookupTimesForStop(final int stop_id, final String location)
     {

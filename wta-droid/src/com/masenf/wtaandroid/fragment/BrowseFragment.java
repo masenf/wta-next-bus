@@ -99,8 +99,13 @@ public class BrowseFragment extends WtaFragment {
 	}
     public void doFetchData()
     {
+		// update the pref flag
+		SharedPreferences spref = getActivity().getSharedPreferences("global", Context.MODE_PRIVATE);
+		Editor ed = spref.edit();
+		ed.putBoolean("fetch_library", false);
+		ed.commit();
+		
     	// this is a task within a task
-    	
 		Log.d(TAG,"doFetchData() - fetching library data");
     	String url = getResources().getString(R.string.api_endpoint);
 		url = new String(url + "library");
@@ -112,11 +117,6 @@ public class BrowseFragment extends WtaFragment {
 				@Override
 				public void updateData(JSONObject result) {
 					Log.d(TAG,"updateDate() - unpacking JSON data, this may take a while");
-					// update the pref flag
-					SharedPreferences spref = getActivity().getSharedPreferences("global", Context.MODE_PRIVATE);
-					Editor e = spref.edit();
-					e.putBoolean("fetch_library", false);
-					e.commit();
 					// call a LibraryUpdateTask to deserialize the JSON and commit the data
 					WtaDatastore d = WtaDatastore.getWritableInstance();
 					LibraryUpdateTask t = new LibraryUpdateTask(d);
