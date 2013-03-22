@@ -82,6 +82,9 @@ def latest_client():
         if v['versionCode'] > max_version['versionCode']:
             max_version = v
     return max_version
+@route('/versions/<filename>')
+def server_static(filename):
+    return static_file(filename, root='./versions')
 
     
 def error(type="GENERAL", message="An error has occurred"):
