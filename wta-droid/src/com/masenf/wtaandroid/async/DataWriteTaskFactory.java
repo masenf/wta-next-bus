@@ -20,7 +20,16 @@ public class DataWriteTaskFactory {
 	public void close() {
 		d.close();
 	}
-	
+	public DataWriteTask setAlias(final int stop_id, final String alias) {
+		return postQuerySet(new DataUpdateQuery() {
+			@Override
+			public ArrayList<Long> execute() {
+				ArrayList<Long> a = new ArrayList<Long>();
+				a.add((long) d.setAlias(stop_id, alias));
+				return a;
+			}
+		});
+	}
 	public DataWriteTask addRecent(final int stop_id, final String name) {
 		return postQuerySet(addLocation(WtaDatastore.TAG_RECENT, stop_id, name, null));
 	}

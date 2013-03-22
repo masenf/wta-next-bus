@@ -264,4 +264,10 @@ public class WtaDatastore {
 		if (tag_id != null) 
 			db.delete(TABLE_TAG_JOIN, KEY_TAGID + " = ?", new String[] {tag_id.toString()});
 	}
+	public int setAlias(int stop_id, String alias) 
+	{
+		ContentValues cvs = new ContentValues();
+		cvs.put(KEY_ALIAS, alias);
+		return db.update(TABLE_STOP, cvs, KEY_STOPID + " = ?", new String[] {String.valueOf(stop_id)});
+	}
 }

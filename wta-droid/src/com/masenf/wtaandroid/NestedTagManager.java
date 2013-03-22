@@ -92,6 +92,9 @@ public class NestedTagManager extends EntryClickHandler implements OnItemClickLi
 		current_item = new StackItem(tag, 0);
 		reloadData();
 	}
+	/** 
+	 * construct a new stack rooted at null
+	 */
 	public void reset() {
 		Log.v(TAG,"Instantiating new Stack for " + getClass().getName());
 		s = new Stack<StackItem>();
@@ -116,7 +119,10 @@ public class NestedTagManager extends EntryClickHandler implements OnItemClickLi
 		}
 		return false;
 	}
-	private void reloadData() {
+	/**
+	 * reload the data that is currently displayed
+	 */
+	public void reloadData() {
 		Log.v(TAG,"reloadData() - started reloading data from " + current_item.getLtag());
 		lv.setAdapter(null);
 		dtf.getContents(current_item.getLtag());	// spawn the fetch task
@@ -190,12 +196,5 @@ public class NestedTagManager extends EntryClickHandler implements OnItemClickLi
 	}
 	public Activity getActivity() {
 		return act;
-	}
-	@Override
-	public boolean onItemLongClick(AdapterView<?> parent, View v, int pos,
-			long id) {
-		// pop up rename dialog
-		// TODO Auto-generated method stub
-		return false;
 	}
 }
