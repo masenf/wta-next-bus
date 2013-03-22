@@ -2,11 +2,10 @@ package com.masenf.wtaandroid.data;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 public class WtaDatastore {
@@ -31,8 +30,11 @@ public class WtaDatastore {
 	public static final String KEY_ORDER = "sorder";
 	
 	public static final String TAG_ROOT = "Root";
+	public static final int ROOT_ID = 0;
 	public static final String TAG_FAVORITES = "Favorites";
+	public static final int FAVORITES_ID = 1;
 	public static final String TAG_RECENT = "Recent";
+	public static final int RECENT_ID = 2;
 	
 	// tag_name table
 	public static final String KEY_COLOR = "color";
@@ -88,13 +90,13 @@ public class WtaDatastore {
 	}
 	void initData() {
 		// create default tags
-		long root_id = createOrUpdateTag(null, TAG_ROOT, null, true);
-		long favorites_id = createOrUpdateTag(null, TAG_FAVORITES, "red", true);
-		long recent_id = createOrUpdateTag(null, TAG_RECENT, "grey", true);
+		createOrUpdateTag(ROOT_ID, TAG_ROOT, null, true);
+		createOrUpdateTag(FAVORITES_ID, TAG_FAVORITES, "red", true);
+		createOrUpdateTag(RECENT_ID, TAG_RECENT, "grey", true);
 		
 		// create basic hierarchy
-		setTag(favorites_id, (int) root_id, TagEntryType.TAG_NAME, 999);
-		setTag(recent_id, (int) root_id, TagEntryType.TAG_NAME, 0);
+		setTag(FAVORITES_ID, ROOT_ID, TagEntryType.TAG_NAME, 999);
+		setTag(RECENT_ID, ROOT_ID, TagEntryType.TAG_NAME, 0);
 	}
 	// database access/manipulation functions
 	
@@ -269,5 +271,16 @@ public class WtaDatastore {
 		ContentValues cvs = new ContentValues();
 		cvs.put(KEY_ALIAS, alias);
 		return db.update(TABLE_STOP, cvs, KEY_STOPID + " = ?", new String[] {String.valueOf(stop_id)});
+	}
+	public long renameTag(int tag_id, String newname) {
+		if (tag_id == ROOT_ID || tag_id == FAVORITES_ID || tag_id == RECENT_ID || newname == null)
+			return 0;
+		try {
+			ContentValues cvs = new ContentValues();
+			cvs.put(KEY_NAME, newname);
+			return db.update(TABLE_TAG, cvs, KEY_ID + " = ?", new String[] {String.valueOf(tag_id)});
+		} catch (SQLiteConstraintException ex) {
+			return 0;		// duplicate name
+		}
 	}
 }

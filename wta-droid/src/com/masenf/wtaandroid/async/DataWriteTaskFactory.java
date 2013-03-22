@@ -30,6 +30,16 @@ public class DataWriteTaskFactory {
 			}
 		});
 	}
+	public DataWriteTask renameTag(final int tag_id, final String newname) {
+		return postQuerySet(new DataUpdateQuery() {
+			@Override
+			public ArrayList<Long> execute() {
+				ArrayList<Long> a = new ArrayList<Long>();
+				a.add((long) d.renameTag(tag_id, newname));
+				return a;
+			}
+		});
+	}
 	public DataWriteTask addRecent(final int stop_id, final String name) {
 		return postQuerySet(addLocation(WtaDatastore.TAG_RECENT, stop_id, name, null));
 	}

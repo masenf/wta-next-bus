@@ -4,6 +4,9 @@ import com.masenf.core.EntryClickHandler;
 import com.masenf.core.data.BaseEntry;
 import com.masenf.wtaandroid.NestedTagManager;
 import com.masenf.wtaandroid.R;
+import com.masenf.wtaandroid.async.DataWriteTaskFactory;
+import com.masenf.wtaandroid.fragment.dialog.EditDialogFragment;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
@@ -65,6 +68,39 @@ public class TagEntry extends BaseEntry {
 		public void handleClick(EntryClickHandler ad) {
 			((NestedTagManager) ad).push(name);
 		}
+		@Override
+		public boolean handleLongClick(EntryClickHandler tg) {
+			EditDialogFragment dialog = new EditDialogFragment() {
+				{
+					// set up defaults for the dialog
+					title = "Rename Tag";
+					editHint = "Tag Name";
+					content = name;
+				}
+				@Override
+				public void doSaveData() {
+
+					if (content == null || content.isEmpty())
+						return;						// delete not implemented
+					
+					name = content;					// update display
+
+					// commit final result to database
+					DataWriteTaskFactory dwtf = new DataWriteTaskFactory(null);
+					dwtf.renameTag(tag_id, content);
+				}
+			};
+    		dialog.show(tg.getActivity().getFragmentManager(), "renameBox");
+    		return true;
+		}
+		/**
+		 * This is probably one of the most poorly named methods of all time.
+		 * 
+		 * Uses ctx to load a drawable resource into a static variable 'folder',
+		 * then proceeds to scale it according to some magic numbers. 
+		 * Plenty of room to clean this up.
+		 * @param ctx
+		 */
 		public static void createFolder(Context ctx) {
 			folder = ctx.getResources().getDrawable(R.drawable.tag_white);
 			float ratio = (float) folder.getIntrinsicWidth() / (float) folder.getIntrinsicHeight();
