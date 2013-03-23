@@ -6,5 +6,8 @@
     { "versionCode": 5,
       "apk": "http://nextbus.soon.it/versions/wta-next-bus-1.22.apk" },
     { "versionCode": 6,
-      "apk": "http://nextbus.soon.it/versions/wta-next-bus-1.23.apk" }
+      "apk": "http://nextbus.soon.it/versions/wta-next-bus-1.23.apk" },
+    { "versionCode": 10,
+      "apk": "http://nextbus.soon.it/versions/wta-next-bus-1.2.6.apk",
+      "description": "First update online!" }
 ]
