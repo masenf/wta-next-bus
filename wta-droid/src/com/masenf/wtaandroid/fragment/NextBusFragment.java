@@ -161,13 +161,11 @@ public class NextBusFragment extends WtaFragment {
 				  ", location_label = " + location);
     }
     private void isFavorite(boolean fav) {
-		if (fav) {
-			favorite = true;
+    	favorite = fav;
+		if (fav)
 			menu_favorite_toggle.setIcon(R.drawable.rm_favorite);
-		} else {
-			favorite = false;
+		else
 			menu_favorite_toggle.setIcon(R.drawable.add_favorite);
-		}
     }
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
