@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import com.masenf.core.EntryClickHandler;
 import com.masenf.core.async.callbacks.DataWriteCallback;
 import com.masenf.core.data.BaseEntry;
+import com.masenf.core.fragment.EditDialogFragment;
 import com.masenf.wtaandroid.NestedTagManager;
 import com.masenf.wtaandroid.R;
 import com.masenf.wtaandroid.async.DataWriteTaskFactory;
-import com.masenf.wtaandroid.fragment.dialog.EditDialogFragment;
 
 import android.content.Context;
 import android.database.Cursor;
