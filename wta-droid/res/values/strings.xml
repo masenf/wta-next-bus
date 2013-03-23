@@ -26,10 +26,17 @@
 	<string name="about_url">https://github.com/masenf/wta-next-bus</string>
 	<string name="about_visit">Visit Github</string>
 	<string name="dismiss">Dismiss</string>
-	
-	<string name="rename_title">Rename Stop</string>
 	<string name="save">Save</string>
+	<string name="proceed">Proceed</string>	
+	<string name="rename_title">Rename Stop</string>
+	<string name="update_title">Update Application from Server</string>
+	<string name="update_message" formatted="false">A new version of this application is available.%n%n
+						Update #%d%n
+						Download URL: %s%n</string>
+	<string name="no_updates">No updates available</string>
+
 	
-	<string name="reload_library">Rebuild Library From Server...</string>
+	<string name="reload_library">Rebuild Library From Server</string>
+	<string name="check_updates">Check for Updates</string>
 
 </resources>

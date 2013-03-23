@@ -15,7 +15,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.masenf.core.ApplicationUpdater;
 import com.masenf.core.GenericTabListener;
 import com.masenf.core.TabNavActivity;
 import com.masenf.wtaandroid.async.DataWriteTaskFactory;
@@ -29,8 +31,6 @@ import com.masenf.wtaandroid.fragment.dialog.AboutDialogFragment;
 public class WtaActivity extends TabNavActivity {
 
 	private static final String TAG = "WtaActivity";
-	
-	private static WtaDatastore writableInstance;
 	
 	private Tab favorites;
 	private Tab search;
@@ -92,26 +92,10 @@ public class WtaActivity extends TabNavActivity {
     		adf.show(getFragmentManager(), "aboutBox");
     		break;
     	case R.id.menu_reload_library:
-    		AlertDialog.Builder b = new AlertDialog.Builder(this);
-    		b.setTitle("Rebuild Library from Server");
-    		b.setMessage("This operation will update the Browse library with the latest version from the server. " +
-    				"Any aliases will be retained, renamed library tags will be duplicated. To reset these customizations, " +
-    				"cancel this dialog, open Settings > Application manager and \"Clear Data\" for the application. " +
-    				"The library will be automatically rebuilt the next time the application starts");
-    		b.setPositiveButton("Proceed", new OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					// update the pref flag
-					SharedPreferences spref = getSharedPreferences("global", Context.MODE_PRIVATE);
-					Editor ed = spref.edit();
-					ed.putBoolean("fetch_library", true);
-					ed.commit();
-					getActionBar().selectTab(favorites);
-					getActionBar().selectTab(browse);
-				}
-    		});
-    		b.setNegativeButton(R.string.dismiss, null);
-    		b.create().show();
+    		promptToReload();
+    		break;
+    	case R.id.menu_check_updates:
+    		checkAndDoUpdate();
     		break;
     	default:
     		return false;
@@ -151,5 +135,58 @@ public class WtaActivity extends TabNavActivity {
     public void lookupTimesForStop(int stop_id)
     {
     	lookupTimesForStop(stop_id, "");
+    }
+    private void checkAndDoUpdate()
+    {
+		final Context ctx = this;
+		String updateURL = getResources().getString(R.string.api_endpoint) + "latest-client";
+		ApplicationUpdater au = new ApplicationUpdater(updateURL, this){
+			public void postFetch() {
+				if (!updateAvailable()) {
+					Toast.makeText(ctx, R.string.no_updates, Toast.LENGTH_SHORT).show();
+					return;
+				}
+				AlertDialog.Builder bob = new AlertDialog.Builder(ctx);
+				bob.setTitle(R.string.update_title);
+				bob.setMessage(String.format(getResources().getString(R.string.update_message),
+						getLatestVersionCode(), getApkURL().toString()));
+				bob.setPositiveButton(R.string.proceed, new OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						downloadUpdate();
+					}
+				});
+				bob.setNegativeButton(R.string.dismiss, null);
+				bob.create().show();
+			}
+			public void postDownload() {
+				installUpdate();
+			}
+		};
+
+		au.fetchUpdateData();
+    }
+    private void promptToReload()
+    {
+		AlertDialog.Builder b = new AlertDialog.Builder(this);
+		b.setTitle("Rebuild Library from Server");
+		b.setMessage("This operation will update the Browse library with the latest version from the server. " +
+				"Any aliases will be retained, renamed library tags will be duplicated. To reset these customizations, " +
+				"cancel this dialog, open Settings > Application manager and \"Clear Data\" for the application. " +
+				"The library will be automatically rebuilt the next time the application starts");
+		b.setPositiveButton("Proceed", new OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// update the pref flag
+				SharedPreferences spref = getSharedPreferences("global", Context.MODE_PRIVATE);
+				Editor ed = spref.edit();
+				ed.putBoolean("fetch_library", true);
+				ed.commit();
+				getActionBar().selectTab(favorites);
+				getActionBar().selectTab(browse);
+			}
+		});
+		b.setNegativeButton(R.string.dismiss, null);
+		b.create().show();
     }
 }
