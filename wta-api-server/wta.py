@@ -108,8 +108,11 @@ class Wta_Interface(HTTP_Client):
         print("Sending request 1...")
         body = self.get(url)
         soup = BeautifulSoup(body)
-        stop_rows = soup.findAll("table")[1].findAll(attrs={'class':('ZebraDark','ZebraLight')})
-        stop_times = []
-        for row in stop_rows:
-            stop_times.append(tuple(map(lambda x: x.text.strip(), row.findChildren("td"))))
-        return stop_times
+        try:
+            stop_rows = soup.findAll("table")[1].findAll(attrs={'class':('ZebraDark','ZebraLight')})
+            stop_times = []
+            for row in stop_rows:
+                stop_times.append(tuple(map(lambda x: x.text.strip(), row.findChildren("td"))))
+            return stop_times
+        except IndexError:
+            return []
